@@ -1,0 +1,305 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>API Reference &mdash; stempy 0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/gallery-dataframe.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script src="../_static/clipboard.min.js"></script>
+        <script src="../_static/copybutton.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="stempy.feature.ptsarray" href="generated/stempy.feature.ptsarray.html" />
+    <link rel="prev" title="Plotting Zernike Moments" href="../auto_examples/plot_moments.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> stempy
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Tutorials:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../glance.html">Stempy at a Glance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guides/index.html">Concepts Walkthrough</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../auto_examples/index.html">Examples</a></li>
+</ul>
+<p class="caption"><span class="caption-text">References</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#feature">Feature</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generated/stempy.feature.ptsarray.html">stempy.feature.ptsarray</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/stempy.feature.ZPs.html">stempy.feature.ZPs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/stempy.feature.zmarray.html">stempy.feature.zmarray</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/stempy.feature.local_max.html">stempy.feature.local_max</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#force-directed-embedding">Force-directed Embedding</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generated/stempy.manifold.ForceGraph8.html">stempy.manifold.ForceGraph8</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/stempy.manifold.compute_graph.html">stempy.manifold.compute_graph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/stempy.manifold.compute_nodes.html">stempy.manifold.compute_nodes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/stempy.manifold.compute_pairs.html">stempy.manifold.compute_pairs</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#scientific-plot">Scientific Plot</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">stempy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>API Reference</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/references/api.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="api-reference">
+<h1>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="feature">
+<h2>Feature<a class="headerlink" href="#feature" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/stempy.feature.ptsarray.html#stempy.feature.ptsarray" title="stempy.feature.ptsarray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptsarray</span></code></a>(pts[, u, v])</p></td>
+<td><p>An array of points in two-dimensional space, a subclass of <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.19)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/stempy.feature.ZPs.html#stempy.feature.ZPs" title="stempy.feature.ZPs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ZPs</span></code></a>(n_max, size[, states])</p></td>
+<td><p>The Zernike polynomials class</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/stempy.feature.zmarray.html#stempy.feature.zmarray" title="stempy.feature.zmarray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">zmarray</span></code></a>(input_array[, n, m, mode])</p></td>
+<td><p>Class representing (pseudo) Zernike moments, which is a subclass of <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.19)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/stempy.feature.local_max.html#stempy.feature.local_max" title="stempy.feature.local_max"><code class="xref py py-obj docutils literal notranslate"><span class="pre">local_max</span></code></a>(img[, block_size, method, …])</p></td>
+<td><p>Find peaks in an image as array with the shape of (num_pts, 2).</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="force-directed-embedding">
+<h2>Force-directed Embedding<a class="headerlink" href="#force-directed-embedding" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/stempy.manifold.ForceGraph8.html#stempy.manifold.ForceGraph8" title="stempy.manifold.ForceGraph8"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ForceGraph8</span></code></a>([X, n_neighbors, metric, …])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/stempy.manifold.compute_graph.html#stempy.manifold.compute_graph" title="stempy.manifold.compute_graph"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_graph</span></code></a>(X, n_neighbors, metric[, …])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/stempy.manifold.compute_nodes.html#stempy.manifold.compute_nodes" title="stempy.manifold.compute_nodes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_nodes</span></code></a>(init_xy)</p></td>
+<td><p>Compute nodes (structured array) from initial layout</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/stempy.manifold.compute_pairs.html#stempy.manifold.compute_pairs" title="stempy.manifold.compute_pairs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_pairs</span></code></a>(graph)</p></td>
+<td><p>Compute pairs from nonzero entries of the graph</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="scientific-plot">
+<h2>Scientific Plot<a class="headerlink" href="#scientific-plot" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_h_axes</span></code>(fig[, n, y, left, right, …])</p></td>
+<td><p>Create a set of horizontal axes.</p></td>
+</tr>
+</tbody>
+</table>
+<p><a class="reference internal" href="generated/stempy.feature.ptsarray.html#stempy.feature.ptsarray" title="stempy.feature.ptsarray"><code class="xref py py-class docutils literal notranslate"><span class="pre">ptsarray</span></code></a> is good</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="generated/stempy.feature.ptsarray.html" class="btn btn-neutral float-right" title="stempy.feature.ptsarray" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../auto_examples/plot_moments.html" class="btn btn-neutral float-left" title="Plotting Zernike Moments" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Dan Jiadong
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

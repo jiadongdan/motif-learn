@@ -1,0 +1,302 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Dimension Reduction via Zernike Polynomials &mdash; stempy 0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/gallery-dataframe.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script src="../_static/clipboard.min.js"></script>
+        <script src="../_static/copybutton.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Dimension Reductions" href="dim_reduction.html" />
+    <link rel="prev" title="Feature points" href="feature_points.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> stempy
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Tutorials:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../glance.html">Stempy at a Glance</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Concepts Walkthrough</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="feature_points.html">Feature points</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Dimension Reduction via Zernike Polynomials</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#what-is-zernike-polynomials">What is Zernike Polynomials</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#visualization-of-zernike-polynomials">Visualization of Zernike Polynomials</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#zernike-moments">Zernike Moments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#visualization-of-zernike-moments">Visualization of Zernike Moments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#zernike-representation-as-matrix-approximation">Zernike Representation as Matrix Approximation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dim_reduction.html">Dimension Reductions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="force.html">How Forces Work</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../auto_examples/index.html">Examples</a></li>
+</ul>
+<p class="caption"><span class="caption-text">References</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../references/api.html">API Reference</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">stempy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html">Concepts Walkthrough</a> &raquo;</li>
+        
+      <li>Dimension Reduction via Zernike Polynomials</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/guides/zernike_poly.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="dimension-reduction-via-zernike-polynomials">
+<h1>Dimension Reduction via Zernike Polynomials<a class="headerlink" href="#dimension-reduction-via-zernike-polynomials" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="what-is-zernike-polynomials">
+<h2>What is Zernike Polynomials<a class="headerlink" href="#what-is-zernike-polynomials" title="Permalink to this headline">¶</a></h2>
+<p>The Zernike polynomials (ZP) are a complete set of <strong>orthogonal</strong> basis functions defined in the unit disk denoted by the double indexing scheme <span class="math notranslate nohighlight">\(Z_{n}^{m}\)</span>, where <span class="math notranslate nohighlight">\(n\)</span> is a nonnegative integer, and <span class="math notranslate nohighlight">\(m=\{-n,-n+2,-n+4, \cdots ,n\}\)</span> for a given <span class="math notranslate nohighlight">\(n\)</span>. The double indices <span class="math notranslate nohighlight">\((n, n)\)</span> are ordered into a single index  <span class="math notranslate nohighlight">\(j=(n(n+2)+m)/2\)</span>. Each ZP consists of a normalization term <span class="math notranslate nohighlight">\(N_{n}^{m}\)</span>, a radial term <span class="math notranslate nohighlight">\(R_{n}^{|m|}\)</span> , and an azimuthal term <span class="math notranslate nohighlight">\(\sin(m\theta)\)</span> or <span class="math notranslate nohighlight">\(\cos(m\theta)\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}Z_{n}^{m}(\rho, \theta)=\left\{\begin{array}{ll}
+N_{n}^{m} R_{n}^{|m|}(\rho) \cos (m \theta) ; &amp; \text { for } m \geq 0 \\
+-N_{n}^{m} R_{n}^{|m|}(\rho) \sin (m \theta) ; &amp; \text { for } m&lt;0
+\end{array}\right..\end{split}\]</div>
+<p>Here, <span class="math notranslate nohighlight">\(R_{n}^{|m|}\)</span>  and <span class="math notranslate nohighlight">\(N_{n}^{m}\)</span> are given by</p>
+<div class="math notranslate nohighlight">
+\[R_{n}^{|m|}(\rho)=\sum_{k=0}^{(n-|m|) / 2} \frac{-1^{k}(n-k) !}{k !\left(\frac{m+|m|}{2}-k\right) !\left(\frac{n-|m|}{2}-k\right) !} \rho^{n-2 k}\]</div>
+<p>and</p>
+<div class="math notranslate nohighlight">
+\[N_{n}^{m}=\sqrt{\frac{2(n+1)}{1+\delta_{m 0}}},\]</div>
+<p>where <span class="math notranslate nohighlight">\(\delta_{m 0}\)</span> is the Kronecker delta.</p>
+<p>Stempy provides the class <a class="reference internal" href="../references/generated/stempy.feature.ZPs.html#stempy.feature.ZPs" title="stempy.feature.ZPs"><code class="xref py py-class docutils literal notranslate"><span class="pre">ZPs</span></code></a> to generate a series of polynomials. By specifying the maximum radial index <code class="docutils literal notranslate"><span class="pre">n_max</span></code>, and the size of polynomial array <code class="docutils literal notranslate"><span class="pre">size</span></code>, the Zernike polynomials can be initialized and array data can be accessed by its attribute <code class="docutils literal notranslate"><span class="pre">data</span></code>. Moreover, the user can select polynomials with different symmetry characteristics if the <code class="docutils literal notranslate"><span class="pre">states</span></code> parameter is given. For example, <code class="code docutils literal notranslate"><span class="pre">states</span> <span class="pre">=</span> <span class="pre">3</span></code> will only select polynomial terms with <span class="math notranslate nohighlight">\(|m|=3\)</span>, and <code class="code docutils literal notranslate"><span class="pre">states</span> <span class="pre">=</span> <span class="pre">[3,</span> <span class="pre">6]</span></code> will select polynomial terms with <span class="math notranslate nohighlight">\(|m|=3, 6\)</span>.</p>
+<div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">stempy.feature</span> <span class="kn">import</span> <span class="n">ZPs</span>
+
+<span class="c1"># intialize zps</span>
+<span class="n">zps</span> <span class="o">=</span> <span class="n">ZPs</span><span class="p">(</span><span class="n">n_max</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span> <span class="n">states</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="c1"># polynomial arrays</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">zps</span><span class="o">.</span><span class="n">data</span>
+<span class="c1"># n indices</span>
+<span class="n">n</span> <span class="o">=</span> <span class="n">zps</span><span class="o">.</span><span class="n">n</span>
+<span class="c1"># m indices</span>
+<span class="n">m</span> <span class="o">=</span> <span class="n">zps</span><span class="o">.</span><span class="n">m</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<div class="section" id="visualization-of-zernike-polynomials">
+<h2>Visualization of Zernike Polynomials<a class="headerlink" href="#visualization-of-zernike-polynomials" title="Permalink to this headline">¶</a></h2>
+<a class="reference external image-reference" href="../../html/auto_examples/plot_zps.html"><img alt="../_images/sphx_glr_plot_zps_001.png" class="align-center" src="../_images/sphx_glr_plot_zps_001.png" style="width: 288.0px; height: 288.0px;" /></a>
+<p>The first 21 terms of Zernike polynomials arranged in a pyramid form. Each polynomial term is labelled by <span class="math notranslate nohighlight">\(Z_n^m\)</span>, where <cite>n</cite> is the radial index and <cite>m</cite> is the azimuthal index. All Zernike polynomials are vertically arranged by <cite>n</cite> and horizontally ordered by <cite>m</cite>.</p>
+<p>The array data of Zernike polynomials can be visualized above and they show prominent symmetry characteristics.</p>
+</div>
+<div class="section" id="zernike-moments">
+<h2>Zernike Moments<a class="headerlink" href="#zernike-moments" title="Permalink to this headline">¶</a></h2>
+<p>Any square-integrable functions <span class="math notranslate nohighlight">\(f(\rho, \theta)\)</span> within a unit disk can be decomposed into an infinite series comprising weighted Zernike polynomials:</p>
+<div class="math notranslate nohighlight">
+\[f(\rho, \theta)=\sum_{n=0}^{\infty} \sum_{m=-n}^{n} A_{n}^{m} Z_{n}^{m}(\rho, \theta), \quad n-|m|=\text { even }\]</div>
+<p>where the coefficients <span class="math notranslate nohighlight">\(A_{n}^{m}\)</span> is can be calculated as,</p>
+<div class="math notranslate nohighlight">
+\[A_{n}^{m}=\int_{0}^{2 \pi} \int_{0}^{1} f(\rho, \theta) Z_{n}^{m}(\rho, \theta) \rho \mathrm{d} \rho \mathrm{d} \theta .\]</div>
+</div>
+<div class="section" id="visualization-of-zernike-moments">
+<h2>Visualization of Zernike Moments<a class="headerlink" href="#visualization-of-zernike-moments" title="Permalink to this headline">¶</a></h2>
+<a class="reference external image-reference" href="../../html/auto_examples/plot_moments.html"><img alt="../_images/sphx_glr_plot_moments_001.png" class="align-center" src="../_images/sphx_glr_plot_moments_001.png" style="width: 576.0px; height: 288.0px;" /></a>
+</div>
+<div class="section" id="zernike-representation-as-matrix-approximation">
+<h2>Zernike Representation as Matrix Approximation<a class="headerlink" href="#zernike-representation-as-matrix-approximation" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="dim_reduction.html" class="btn btn-neutral float-right" title="Dimension Reductions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="feature_points.html" class="btn btn-neutral float-left" title="Feature points" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Dan Jiadong
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

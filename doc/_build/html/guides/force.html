@@ -1,0 +1,402 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>How Forces Work &mdash; stempy 0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/gallery-dataframe.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script src="../_static/clipboard.min.js"></script>
+        <script src="../_static/copybutton.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Examples" href="../auto_examples/index.html" />
+    <link rel="prev" title="Dimension Reductions" href="dim_reduction.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> stempy
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Tutorials:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../glance.html">Stempy at a Glance</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Concepts Walkthrough</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="feature_points.html">Feature points</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zernike_poly.html">Dimension Reduction via Zernike Polynomials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dim_reduction.html">Dimension Reductions</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">How Forces Work</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#the-anatomy-of-the-force-directed-emebedding-algorithm">The Anatomy of the Force-directed Emebedding Algorithm</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../auto_examples/index.html">Examples</a></li>
+</ul>
+<p class="caption"><span class="caption-text">References</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../references/api.html">API Reference</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">stempy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html">Concepts Walkthrough</a> &raquo;</li>
+        
+      <li>How Forces Work</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/guides/force.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="how-forces-work">
+<h1>How Forces Work<a class="headerlink" href="#how-forces-work" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="the-anatomy-of-the-force-directed-emebedding-algorithm">
+<h2>The Anatomy of the Force-directed Emebedding Algorithm<a class="headerlink" href="#the-anatomy-of-the-force-directed-emebedding-algorithm" title="Permalink to this headline">¶</a></h2>
+<p>There are <strong>three</strong> important stages in our force-directed embedding method. This section is to help the readers have quick preview of the source code and reproduce the results with better performance.</p>
+<ul class="simple">
+<li><p>Compute the graph (<em>adjacent matrix</em>) from the input high dimensional data <span class="math notranslate nohighlight">\(X\)</span>.</p></li>
+<li><p>Generate <code class="docutils literal notranslate"><span class="pre">nodes</span></code> (vertices) from initial layout and <code class="docutils literal notranslate"><span class="pre">pairs</span></code> from the graph.</p></li>
+<li><p>Optimize the position of <code class="docutils literal notranslate"><span class="pre">nodes</span></code> (vertices) under specified forces.</p></li>
+</ul>
+<div class="topic">
+<p class="topic-title">Compute a graph from input feature vectors <span class="math notranslate nohighlight">\(X\)</span></p>
+<ol class="arabic simple">
+<li><p>use <em>k-nearest neighbors</em> (kNN) model to obtain the neighbor distances and neigbor indices (locate the valid entries of graph adjacency matrix)</p></li>
+<li><p>use asssumptions in UMAP to calculate assymetric weight of the adjacency matrix <span class="math notranslate nohighlight">\(P_{ij}\)</span></p></li>
+<li><p>symmetrize the adjacency matrix</p></li>
+</ol>
+</div>
+<div class="graphviz"><object data="../_images/graphviz-6cb893463f3b2bb3d5b657de21c9ec3e0600444f.svg" type="image/svg+xml" class="graphviz">
+<p class="warning">digraph g {
+graph [
+rankdir = &quot;LR&quot;
+];
+node [
+fontsize = &quot;16&quot;
+shape = &quot;ellipse&quot;
+];
+edge [
+];
+&quot;params1&quot; [
+label = &quot;&lt;f0&gt; X| &lt;f1&gt; n_neighbors| &lt;f2&gt; metric&quot;
+shape = &quot;record&quot;
+];
+
+&quot;knn&quot; [
+label = &quot;&lt;f0&gt; kNN model&quot;
+shape = &quot;record&quot;
+style = filled
+];
+
+&quot;params2&quot; [
+label = &quot;&lt;f0&gt; d| &lt;f1&gt; ind&quot;
+shape = &quot;record&quot;
+];
+
+&quot;params3&quot; [
+label = &quot;&lt;f0&gt; local_connectivity| &lt;f1&gt; perplexity&quot;
+shape = &quot;record&quot;
+];
+
+&quot;qij&quot; [
+label = &quot;&lt;f0&gt; calculate_Q&quot;
+shape = &quot;record&quot;
+style = filled
+];
+
+&quot;params4&quot; [
+label = &quot;&lt;f0&gt; Q&quot;
+shape = &quot;record&quot;
+];
+
+&quot;params5&quot; [
+label = &quot;&lt;f0&gt; mix_ratio&quot;
+shape = &quot;record&quot;
+];
+
+&quot;pij&quot; [
+label = &quot;&lt;f0&gt; symmetrize&quot;
+shape = &quot;record&quot;
+style = filled
+];
+
+&quot;params6&quot; [
+label = &quot;&lt;f0&gt; P&quot;
+shape = &quot;record&quot;
+];
+
+
+&quot;params1&quot;:f0 -&gt; &quot;knn&quot;:f0
+&quot;params1&quot;:f1 -&gt; &quot;knn&quot;:f0
+&quot;params1&quot;:f2 -&gt; &quot;knn&quot;:f0
+
+&quot;knn&quot;:f0 -&gt; &quot;params2&quot;:f0
+&quot;knn&quot;:f0 -&gt; &quot;params2&quot;:f1
+
+&quot;params2&quot;:f0 -&gt; &quot;qij&quot;:f0
+&quot;params3&quot;:f0 -&gt; &quot;qij&quot;:f0
+&quot;params3&quot;:f1 -&gt; &quot;qij&quot;:f0
+
+&quot;qij&quot;:f0 -&gt; &quot;params4&quot;:f0
+
+&quot;params4&quot;:f0 -&gt; &quot;pij&quot;:f0
+&quot;params5&quot;:f0 -&gt; &quot;pij&quot;:f0
+&quot;params2&quot;:f1 -&gt; &quot;pij&quot;:f0
+
+&quot;pij&quot;:f0 -&gt; &quot;params6&quot;:f0
+
+}</p></object></div>
+<div class="topic">
+<p class="topic-title">Generate <code class="docutils literal notranslate"><span class="pre">nodes</span></code> and <code class="docutils literal notranslate"><span class="pre">pairs</span></code> from the graph</p>
+<p>For performance and clarity, the <code class="docutils literal notranslate"><span class="pre">nodes</span></code> are <em>structured array</em> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.19)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>). In this way, it is convenient to use literal string <em>‘x’</em> and <em>‘y’</em> to access the coordinates.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">xy</span> <span class="o">=</span> <span class="p">[(</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">),</span> <span class="p">(</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">node_dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">([(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Convert to structured array</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nodes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">xy</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">node_dtype</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># access x and y</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nodes</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nodes</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p><em>pairs</em> are numpy arrays of the shape <code class="docutils literal notranslate"><span class="pre">(n,</span> <span class="pre">3)</span></code>, where <code class="docutils literal notranslate"><span class="pre">n</span></code> is the number of nonzero values in adjacency matrix. Every row of pairs is contructed in the form <code class="docutils literal notranslate"><span class="pre">(i,</span> <span class="pre">j,</span> <span class="pre">w)</span></code>, where <code class="docutils literal notranslate"><span class="pre">i</span></code> and <code class="docutils literal notranslate"><span class="pre">j</span></code> are indices of <span class="math notranslate nohighlight">\(i^{th}\)</span> and <span class="math notranslate nohighlight">\(j^{th}\)</span> nodes and <code class="docutils literal notranslate"><span class="pre">w</span></code> the weight of the two nodes.</p>
+</div>
+<div class="graphviz"><object data="../_images/graphviz-60de0520df9ec6306d486002717a929e9deb9e85.svg" type="image/svg+xml" class="graphviz">
+<p class="warning">digraph g {
+graph [
+rankdir = &quot;LR&quot;
+];
+node [
+fontsize = &quot;16&quot;
+shape = &quot;ellipse&quot;
+];
+edge [
+];
+&quot;params1&quot; [
+label = &quot;&lt;f0&gt; P&quot;
+shape = &quot;record&quot;
+];
+
+&quot;X_seed&quot; [
+label = &quot;&lt;f0&gt; X| &lt;f1&gt; seed&quot;
+shape = &quot;record&quot;
+];
+
+&quot;xy&quot; [
+label = &quot;&lt;f0&gt; xy&quot;
+shape = &quot;record&quot;
+];
+
+&quot;func_compute_nodes&quot; [
+label = &quot;&lt;f0&gt; compute_nodes&quot;
+shape = &quot;record&quot;
+style = filled
+];
+
+&quot;func_compute_pairs&quot; [
+label = &quot;&lt;f0&gt; compute_pairs&quot;
+shape = &quot;record&quot;
+style = filled
+];
+
+&quot;func_init_xy&quot; [
+label = &quot;&lt;f0&gt; init_xy&quot;
+shape = &quot;record&quot;
+style = filled
+];
+
+
+&quot;params1&quot;:f0 -&gt; &quot;func_compute_pairs&quot;:f0 -&gt; &quot;pairs&quot;;
+&quot;X_seed&quot;:f0 -&gt; &quot;func_init_xy&quot; -&gt; &quot;xy&quot; -&gt; &quot;func_compute_nodes&quot;:f0 -&gt; &quot;nodes&quot;;
+&quot;X_seed&quot;:f1 -&gt; &quot;func_init_xy&quot; 
+}</p></object></div>
+<div class="topic">
+<p class="topic-title">Layout optimization under forces</p>
+<p>This is where most of the computation happens.</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../auto_examples/index.html" class="btn btn-neutral float-right" title="Examples" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="dim_reduction.html" class="btn btn-neutral float-left" title="Dimension Reductions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Dan Jiadong
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

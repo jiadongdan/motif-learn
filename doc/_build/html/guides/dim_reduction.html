@@ -1,0 +1,252 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Dimension Reductions &mdash; stempy 0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/gallery-dataframe.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script src="../_static/clipboard.min.js"></script>
+        <script src="../_static/copybutton.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="How Forces Work" href="force.html" />
+    <link rel="prev" title="Dimension Reduction via Zernike Polynomials" href="zernike_poly.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> stempy
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Tutorials:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../glance.html">Stempy at a Glance</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Concepts Walkthrough</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="feature_points.html">Feature points</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zernike_poly.html">Dimension Reduction via Zernike Polynomials</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Dimension Reductions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#linear-dimension-reductions">Linear dimension reductions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nonlinear-dimension-reductions">Nonlinear dimension reductions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="force.html">How Forces Work</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../auto_examples/index.html">Examples</a></li>
+</ul>
+<p class="caption"><span class="caption-text">References</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../references/api.html">API Reference</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">stempy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html">Concepts Walkthrough</a> &raquo;</li>
+        
+      <li>Dimension Reductions</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/guides/dim_reduction.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="dimension-reductions">
+<h1>Dimension Reductions<a class="headerlink" href="#dimension-reductions" title="Permalink to this headline">¶</a></h1>
+<p>Dimension reduction is the transformation of the input data <span class="math notranslate nohighlight">\(X \in \mathbb{R}^{n \times m}\)</span> into <span class="math notranslate nohighlight">\(Y \in \mathbb{R}^{n \times k}\)</span> from <span class="math notranslate nohighlight">\(m\)</span>-dimensional space to <span class="math notranslate nohighlight">\(k\)</span>-dimensional space (<span class="math notranslate nohighlight">\(k &lt; m\)</span>). Related methods are commonly divided into linear and nonlinear approaches. The key difference between two genres is that if there exists a matrix <span class="math notranslate nohighlight">\(P \in \mathbb{R}^{m \times k}\)</span> that statifies <span class="math notranslate nohighlight">\(Y = XP\)</span>. In linear methods, the optimization is achived by obtaining <span class="math notranslate nohighlight">\(P\)</span>, while in nonlinear methods, <span class="math notranslate nohighlight">\(Y\)</span> is updated during the optimization.</p>
+<div class="section" id="linear-dimension-reductions">
+<h2>Linear dimension reductions<a class="headerlink" href="#linear-dimension-reductions" title="Permalink to this headline">¶</a></h2>
+<div class="admonition-definition-linear-dimensionality-reduction admonition">
+<p class="admonition-title">Definition: (Linear Dimensionality Reduction)</p>
+<p>Given <span class="math notranslate nohighlight">\(n\)</span> <span class="math notranslate nohighlight">\(m\)</span>-dimensional data points <span class="math notranslate nohighlight">\(X = {x_1, x_2, \cdots, x_n} \in \mathbb{R}^{n \times m}\)</span> and a choice of dimensionality <span class="math notranslate nohighlight">\(k &lt; m\)</span>, optimize some objective <span class="math notranslate nohighlight">\(f_{X}(\cdot)\)</span> to produce a linear transformation <span class="math notranslate nohighlight">\(P \in \mathbb{R}^{m \times k}\)</span>, and call <span class="math notranslate nohighlight">\(Y=P X \in \mathbb{R}^{r \times n}\)</span> the low dimensional transformed data.</p>
+</div>
+<p>The intuition behind the optimization program should be apparent: the objective <span class="math notranslate nohighlight">\(f_{X}(\cdot)\)</span> defines the feature of interest to be captured in the data <span class="math notranslate nohighlight">\(X\)</span>, and encodes some aspects of the linear mapping <span class="math notranslate nohighlight">\(P\)</span> such that <span class="math notranslate nohighlight">\(Y = P X\)</span>. Different objective functions will produce various <span class="math notranslate nohighlight">\(P\)</span>.</p>
+<p>The most poopular linear dimensionality reduction technique is principal component analysis (PCA). The objective of PCA is finding a set of <span class="math notranslate nohighlight">\(k\)</span> orthogonal basis that map X to Y, by maximizing the variance of Y in low-dimensional space. This is equivalent to minimizing the least-squares reconstruction error (the lost variance).</p>
+</div>
+<div class="section" id="nonlinear-dimension-reductions">
+<h2>Nonlinear dimension reductions<a class="headerlink" href="#nonlinear-dimension-reductions" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="force.html" class="btn btn-neutral float-right" title="How Forces Work" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="zernike_poly.html" class="btn btn-neutral float-left" title="Dimension Reduction via Zernike Polynomials" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Dan Jiadong
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
