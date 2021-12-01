@@ -12,7 +12,7 @@ from .colors import colors_from_lbs
 
 
 
-def plot_image(ax, img, clip=False, **kwargs):
+def plot_image(ax, img=None, clip=False, remove_axis=True, **kwargs):
     """
     A convenience function to display image with or without a circle clip
 
@@ -36,15 +36,19 @@ def plot_image(ax, img, clip=False, **kwargs):
 
     clip : bool, default: False
     """
+    if img is None:
+        img = np.random.random((32, 32))
     h, w = img.shape[0:2]
     im = ax.imshow(img, **kwargs)
-    # ax.axis('off')
-    ax.set_xticks([])
-    ax.set_yticks([])
-    ax.xaxis.set_ticklabels([])
-    ax.yaxis.set_ticklabels([])
-    for axis in ['top', 'bottom', 'left', 'right']:
-        ax.spines[axis].set_visible(False)
+    if remove_axis:
+        ax.axis('off')
+    else:
+        ax.set_xticks([])
+        ax.set_yticks([])
+        ax.xaxis.set_ticklabels([])
+        ax.yaxis.set_ticklabels([])
+        for axis in ['top', 'bottom', 'left', 'right']:
+            ax.spines[axis].set_visible(False)
 
     if clip == True:
         patch = patches.Circle((w / 2 - 0.5, h / 2 - 0.5), radius=(h + w) / 4 - 1., transform=ax.transData)
