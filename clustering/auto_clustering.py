@@ -144,7 +144,7 @@ class Heatmap:
             for i in range(self.data.shape[0]):
                 for j in range(self.data.shape[1]):
                     # here this is data
-                    data = np.round(data, 2)
+                    data = np.round(data, 3)
                     text = ax.text(j, i, data[i, j], ha="center", va="center", color="k", fontsize=8)
         else:
             ax.xaxis.set_ticklabels([])
