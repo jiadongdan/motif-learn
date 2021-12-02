@@ -217,6 +217,21 @@ class ZPs(TransformerMixin, BaseEstimator):
             moments = moments / (s * s / 4) / np.pi
             self.moments = zmarray(moments, self.n, self.m, self.alpha)
 
+        elif method == 'transpose':
+            X = X.reshape(X.shape[0], -1)
+            N = self.data.shape[0]
+            data_ = self.data.reshape(N, -1)
+            d = np.sqrt(X.shape[1]).astype(int)
+            area = np.pi * d * d / 4
+            moments = X.dot(data_.T) / area
+            self.moments = zmarray(moments, self.n, self.m, self.alpha)
+
+        elif method == 'pseudo':
+            X = X.reshape(X.shape[0], -1)
+            N = self.data.shape[0]
+            data_ = self.data.reshape(N, -1)
+            self.moments = zmarray(X.dot(np.linalg.pinv(data_)), self.n, self.m, self.alpha)
+
         elif method == 'fftconv':
             self.moments = fftconvolve(X, self.data, mode='same', axes=[1, 2])
             f = 1 - self.n % 2
