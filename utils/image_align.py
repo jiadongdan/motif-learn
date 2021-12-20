@@ -2,7 +2,8 @@ import numpy as np
 
 from skimage.transform import warp
 from skimage.transform import SimilarityTransform
-from skimage.feature import register_translation
+# from skimage.feature import register_translation
+from skimage.registration import phase_cross_correlation
 
 def get_roi(img, roi):
     x, y, h, w = roi
@@ -14,7 +15,7 @@ def get_translation(img1, img2, roi=None, n_iter=10, upsample_factor=100):
         roi = (10, 10, h-20, w-20)
     ij = np.array([0, 0])
     for i in np.arange(0, n_iter):
-        shift, error, diffphase = register_translation(img1, img2, upsample_factor = upsample_factor)
+        shift, error, diffphase = phase_cross_correlation(img1, img2, upsample_factor = upsample_factor)
         j, i = -shift
         ij = ij + np.array([i, j])
         if i == 0.0 and j == 0.0:
@@ -120,7 +121,7 @@ def image_align_deprecated(data, roi = None):
     ref = img_stack[0].copy()
     print('Starting...')
     for e, img in enumerate(img_stack):
-        shift, error, diffphase = register_translation(ref, img, upsample_factor = 100)
+        shift, error, diffphase = phase_cross_correlation(ref, img, upsample_factor = 100)
         i, j = shift
         tform = SimilarityTransform(translation=(-j, -i))
         warped = warp(data[e], tform)
@@ -140,7 +141,7 @@ def image_align_ij_deprecated(data, roi=None):
     ref = img_stack[0].copy()
     print('Starting...')
     for e, img in enumerate(img_stack):
-        shift, error, diffphase = register_translation(ref, img, upsample_factor=100)
+        shift, error, diffphase = phase_cross_correlation(ref, img, upsample_factor=100)
         i, j = shift
         empty.append([i, j])
     return np.array(empty)
