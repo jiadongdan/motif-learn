@@ -89,7 +89,7 @@ def plot_compare(imgs, size=18, cursor=False, **kwargs):
     # sklearn check_array is not recommended here
     # imgs = check_array(imgs, allow_nd=True)
     n = len(imgs)
-    fig, axes = plt.subplots(1, n, figsize=(size, size/n))
+    fig, axes = plt.subplots(1, n, figsize=(size, size/n), sharex=True, sharey=True)
     for i, ax in enumerate(axes):
         ax.imshow(imgs[i], **kwargs)
         ax.axis('off')
