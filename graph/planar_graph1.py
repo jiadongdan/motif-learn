@@ -1,10 +1,15 @@
 import numpy as np
-from itertools import permutations
 import matplotlib.pyplot as plt
 from matplotlib.patches import Polygon
 from matplotlib.collections import LineCollection
+
 from numpy.lib.stride_tricks import sliding_window_view
 from sklearn.neighbors import radius_neighbors_graph
+
+from matplotlib.path import Path
+from matplotlib.patches import PathPatch
+
+from scipy.sparse import csr_matrix
 
 
 # conversion
@@ -199,11 +204,12 @@ class PlanarGraph:
 
         self.pts = pts
         self.matrix = matrix
-        self.matrix_sparse = None
+        self.matrix_sparse = csr_matrix(matrix)
         self.edges = matrix2edges(self.matrix)
         # a list of neighbor indices
         self.inds = matrix2inds(self.matrix)
-        self.knns = self.matrix.sum(axis=0)
+
+        self.degrees = self.matrix.sum(axis=0)
 
         self.rmin, self.max = get_rmin_rmax(self.pts, self.edges)
 
@@ -216,36 +222,27 @@ class PlanarGraph:
         self.num_of_edges = len(self.edges)
         self.num_of_wedges = len(self.wedges)
 
-        # polygons are formed by grouping wedges
-        self.polys = group_wedges(self.wedges)
-        self.k = np.array([len(polygon) for polygon in self.polys])
+    # polygons are formed by grouping wedges
+    @property
+    def polys(self):
+        polys = group_wedges(self.wedges)
 
-        # polygon indices for each point, note that knns >= ns
-        inds, cnts = np.unique(np.hstack(self.polys), return_counts=True)
-        self.ns = np.zeros_like(self.knns)
-        for (i, cnt) in zip(inds, cnts):
-            self.ns[i] = cnt
-        # connectable matrix
-        ii = np.where(self.knns - self.ns == 0)[0]
-        self.connectable = np.ones_like(self.matrix)
-        self.connectable[:, ii] = 0
-        self.connectable[ii, :] = 0
-        # indices in one polygon also cannot connect
-        ij = np.vstack([list(permutations(poly, 2)) for poly in self.polys])
-        for (i, j) in ij:
-            self.connectable[i, j] = 0
+        # remove polygons
+        polys = np.array([poly for poly in polys if len(poly)<=10], dtype=object)
+        return polys
 
+    @property
+    def polys_(self):
+        kmax = self.k.max()
+        return np.array([poly.tolist() + [-1] * (kmax - len(poly)) for poly in self.polys])
 
-    def polys1(self):
-        # polygons are formed by grouping wedges
-        polygons = group_wedges(self.wedges)
-        # THE polygon with max number of nodes is the boundary
-        self.k = np.array([len(polygon) for polygon in polygons])
-        idx = np.argmax(self.k)
+    @property
+    def k(self):
+        return np.array([len(polygon) for polygon in self.polys])
 
-        self.boundary = polygons[idx]
-        del polygons[idx]
-        return polygons
+    @property
+    def centers(self):
+        return np.array([self.pts[poly].mean(axis=0) for poly in self.polys])
 
     @classmethod
     def construct(cls, pts, rmin, rmax):
@@ -254,19 +251,26 @@ class PlanarGraph:
         matrix[matrix > 0] = 1
         return cls(pts, matrix)
 
-    def grow(self, rmax):
-        matrix = radius_neighbors_graph(self.pts, rmax, mode='distance', p=2).toarray()
-        matrix[matrix < self.rmin] = 0
-        matrix[matrix > 0] = 1
-        matrix = self.matrix  + matrix * self.connectable
-        matrix[matrix > 0] = 1
-        return PlanarGraph(self.pts, matrix)
+
+    def to_image(self):
+        pass
+
+    def to_polygon_graph(self):
+        polys = self.polys
+        polys_ = self.polys_
+        ll = [np.where(np.isin(polys_, poly).sum(axis=1) == 2)[0] for poly in polys]
+        ijs = [(i, j) for i, l in enumerate(ll) for j in l]
+        shape = (len(polys), len(polys))
+        matrix = np.zeros(shape)
+        for (i,j) in ijs:
+            matrix[i, j] = 1
+        return PlanarGraph(self.centers, matrix)
 
     def show_edges(self, ax=None):
         if ax is None:
             fig, ax = plt.subplots(1, 1, figsize=(7.2, 7.2))
+        ax.scatter(self.pts[:, 0], self.pts[:, 1], color='C0', s=10)
 
-        ax.scatter(self.pts[:, 0], self.pts[:, 1], s=4)
         lines = np.array([(self.pts[i], self.pts[j]) for (i, j) in self.edges])
         segs = LineCollection(lines, color='#2d3742')
         ax.add_collection(segs)
@@ -280,3 +284,16 @@ class PlanarGraph:
             if len(inds) in [3, 4, 5, 6, 7, 8]:
                 poly = Polygon(self.pts[inds], ec='#2d3742', fc=mpl_10[len(inds)-3], alpha=0.5)
                 ax.add_patch(poly)
+
+    # only a bit faster
+    def show_(self, ax=None):
+        mpl_10 = np.array(['C0', 'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9'])
+        if ax is None:
+            fig, ax = plt.subplots(1, 1, figsize=(7.2, 7.2))
+        ax.scatter(self.pts[:, 0], self.pts[:, 1], color='r', s=10)
+
+        for e in np.unique(self.k):
+            polys_selected = self.pts[np.vstack(self.polys[self.k == e])]
+            polys_path = Path.make_compound_path_from_polys(polys_selected)
+            polys_patch = PathPatch(polys_path, ec='#2d3742', fc=mpl_10[polys_selected.shape[1]-3], alpha=0.5)
+            ax.add_patch(polys_patch)

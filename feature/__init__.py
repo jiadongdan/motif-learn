@@ -28,7 +28,7 @@ from .transform import register_imgs
 
 from .ptsarray import ptsarray
 
-from .share_utils import j2nm, nm2j
+from .share_utils import j2nm, nm2j, nm2j_complex
 
 from .zps_matrix6 import ps_zps
 from .dim_reduction import ps_pca
@@ -54,6 +54,7 @@ __all__ = [
            'Bessel',
            'j2nm',
            'nm2j',
+           'nm2j_complex',
            'ps_zps',
            'ps_pca'
            ]
