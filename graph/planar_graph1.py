@@ -11,6 +11,10 @@ from matplotlib.patches import PathPatch
 
 from scipy.sparse import csr_matrix
 
+from scipy.stats import mode
+
+from grakel import Graph
+
 
 # conversion
 def matrix2edges(matrix):
@@ -200,7 +204,12 @@ def get_rmin_rmax(pts, ij):
 
 class PlanarGraph:
 
-    def __init__(self, pts, matrix):
+    def __init__(self, pts, matrix, node_lbs=None):
+
+        if node_lbs is None:
+            self.node_lbs = {i:1 for i in range(len(pts))}
+        else:
+            self.node_lbs = node_lbs
 
         self.pts = pts
         self.matrix = matrix
@@ -252,19 +261,54 @@ class PlanarGraph:
         return cls(pts, matrix)
 
 
+    def is_symmetric(self, rtol=1e-05, atol=1e-08):
+        return np.allclose(self.matrix, self.matrix.T, rtol=rtol, atol=atol)
+
+
     def to_image(self):
         pass
 
-    def to_polygon_graph(self):
-        polys = self.polys
-        polys_ = self.polys_
+
+    def remove_major_k(self):
+        pass
+
+    def to_polygon_graph(self, remove_major=True):
+        if remove_major:
+            major_k = mode(self.k).mode[0]
+            mask = ~(self.k == major_k)
+            polys = self.polys[mask]
+            polys_ = self.polys_[mask]
+            pts = self.centers[mask]
+        else:
+            polys = self.polys
+            polys_ = self.polys_
+            pts = self.centers
         ll = [np.where(np.isin(polys_, poly).sum(axis=1) == 2)[0] for poly in polys]
         ijs = [(i, j) for i, l in enumerate(ll) for j in l]
         shape = (len(polys), len(polys))
         matrix = np.zeros(shape)
         for (i,j) in ijs:
             matrix[i, j] = 1
-        return PlanarGraph(self.centers, matrix)
+        return PlanarGraph(pts, matrix)
+
+    def extract_subgraphs(self, remove_major=True):
+        if remove_major:
+            major_k = mode(self.k).mode[0]
+            mask = ~(self.k == major_k)
+            polys = self.polys[mask]
+            polys_ = self.polys_[mask]
+        else:
+            polys = self.polys
+            polys_ = self.polys_
+
+        ll = [np.where(np.isin(polys_, poly).sum(axis=1) == 2)[0] for poly in polys]
+        ijs = [(i, j) for i, l in enumerate(ll) for j in l]
+        subgraphs_nodes = np.array([np.unique(np.hstack([polys[i], polys[j]])) for (i, j) in ijs], dtype=object)
+        return subgraphs_nodes
+
+    # convert to grakel graph
+    def to_grakel_graph(self):
+        return Graph(self.matrix, self.node_lbs)
 
     def show_edges(self, ax=None):
         if ax is None:
