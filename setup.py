@@ -1,7 +1,7 @@
 from distutils.core import setup
 setup(
   name = 'motif-learn',         # How you named your package folder
-  packages = ['motiflearn'],   # Chose the same as "name"
+  packages = ['motif-learn'],   # Chose the same as "name"
   version = '0.1',      # Start with a small number and increase it with every change you make
   license='MIT',        # Chose a license from here: https://help.github.com/articles/licensing-a-repository
   description = 'Zernike feature representation and manifold learning of scanning transmission electron microscopy images', # Give a short description about your library
