@@ -1,5 +1,6 @@
 .idea/**
 motif_learn.egg-info
+notebooks/.idea/**
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
