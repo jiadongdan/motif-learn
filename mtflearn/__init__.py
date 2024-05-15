@@ -21,15 +21,22 @@ class _LazyLoader:
         return dir(module)
 
 # Setup lazy loading for sub-packages.
-features = _LazyLoader('stempy.features')
+features = _LazyLoader('mtflearn.features')
+denoise = _LazyLoader('mtflearn.denoise')
+
 
 # Explicit imports for frequently used functions or classes
 # These are assumed to be lightweight and commonly used enough to justify immediate loading.
-from stempy.features._zps import ZPs # Assuming denoise_svd is lightweight
-from stempy.features._zmoments import zmoments# Assuming denoise_svd is lightweight
+from mtflearn.features._zps import ZPs   # Assuming this is lightweight
+from mtflearn.features._zmoments import zmoments
+from mtflearn.denoise._denoise_svd import denoise_svd
+from mtflearn.denoise._denoise_svd import DenoiseSVD
 
 
 __all__ = ['features',
+           'denoise',
            'ZPs',
            'zmoments',
+           'denoise_svd',
+           'DenoiseSVD',
            ]
