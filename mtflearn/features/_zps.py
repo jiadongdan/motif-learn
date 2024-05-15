@@ -4,6 +4,7 @@ from scipy.signal import fftconvolve
 from sklearn.base import BaseEstimator, TransformerMixin
 from typing import Union, Optional, Tuple
 
+
 class ZPs(BaseEstimator, TransformerMixin):
 
     def __init__(self, n_max: int, size: int):
@@ -17,9 +18,9 @@ class ZPs(BaseEstimator, TransformerMixin):
         for k in range((n - abs(m)) // 2 + 1):
             num = (-1) ** k * factorial(n - k)
             denom = (
-                factorial(k)
-                * factorial((n + abs(m)) // 2 - k)
-                * factorial((n - abs(m)) // 2 - k)
+                    factorial(k)
+                    * factorial((n + abs(m)) // 2 - k)
+                    * factorial((n - abs(m)) // 2 - k)
             )
             coefficient = num / denom
             z += coefficient * rho ** (n - 2 * k)
@@ -99,13 +100,12 @@ class ZPs(BaseEstimator, TransformerMixin):
         shape = (len(self.n), image.shape[0], image.shape[1])
         image = np.broadcast_to(image, shape)
         zernike_moments = fftconvolve(image, self.polynomials, mode='same', axes=[1, 2])
-        f = 1-self.n % 2
+        f = 1 - self.n % 2
         f[f == 0] = -1
         f = f[:, np.newaxis, np.newaxis]
         area = np.pi * (self.size) ** 2 / 4
         zernike_moments = f * zernike_moments / area
         return zernike_moments
 
-    def fit_transform(self, images: np.ndarray) -> np.ndarray:
-        self.fit(images)
-        return self.transform(images)
+    def fit_transform(self, X: np.ndarray, y=None, **kwargs) -> np.ndarray:
+        return self.fit(X).transform(X)
