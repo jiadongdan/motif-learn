@@ -5,6 +5,7 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from typing import Union, Optional, Tuple
 
 class ZPs(BaseEstimator, TransformerMixin):
+
     def __init__(self, n_max: int, size: int):
         self.n_max = n_max
         self.size = size
@@ -94,13 +95,12 @@ class ZPs(BaseEstimator, TransformerMixin):
 
         return zernike_moments
 
-
     def _transform_fft_convolve(self, image: np.ndarray):
-        shape = (len(self.n),image.shape[0],image.shape[1])
-        image = np.broadcast_to(image,shape)
+        shape = (len(self.n), image.shape[0], image.shape[1])
+        image = np.broadcast_to(image, shape)
         zernike_moments = fftconvolve(image, self.polynomials, mode='same', axes=[1, 2])
         f = 1-self.n % 2
-        f[f==0] = -1
+        f[f == 0] = -1
         f = f[:, np.newaxis, np.newaxis]
         area = np.pi * (self.size) ** 2 / 4
         zernike_moments = f * zernike_moments / area

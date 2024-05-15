@@ -21,7 +21,7 @@ def nm2j_complex(n, m):
     return i
 
 
-def check_array1d(input):
+def check_array1d(data):
     """
     Converts a scalar or array-like input into a 1-dimensional numpy array.
 
@@ -32,7 +32,7 @@ def check_array1d(input):
     numpy.ndarray: A 1D numpy array based on the provided input.
     """
     # Convert the input to a numpy array, np.atleast_1d ensures it's at least 1D
-    array = np.atleast_1d(input)
+    array = np.atleast_1d(data)
 
     # Flatten the array to ensure it is 1D
     return array.ravel()
