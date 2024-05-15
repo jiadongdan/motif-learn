@@ -64,13 +64,14 @@ class ZPs(BaseEstimator, TransformerMixin):
         elif images.ndim == 3:
             return self._transform_dot_product(images)
 
-    def _transform_dot_product(self, images: np.ndarray) -> np.ndarray:
-        if images.ndim != 3:
-            raise ValueError("Input images should be a 3D numpy array")
-
+    def _validate_size(self, images):
         num_images, height, width = images.shape
         if height != self.size or width != self.size:
-            raise ValueError("Each image size must match the initialized size")
+            raise ValueError("Each image size must match the initialized polynomial size")
+
+    def _transform_dot_product(self, images: np.ndarray) -> np.ndarray:
+        num_images, height, width = images.shape
+        self._validate_size(images)
 
         reshaped_polynomials = np.array(self.polynomials).reshape(-1, self.size * self.size)
         reshaped_images = images.reshape(num_images, self.size * self.size)
@@ -81,12 +82,8 @@ class ZPs(BaseEstimator, TransformerMixin):
         return zernike_moments
 
     def _transform_pseudo_inverse(self, images: np.ndarray) -> np.ndarray:
-        if images.ndim != 3:
-            raise ValueError("Input images should be a 3D numpy array")
-
         num_images, height, width = images.shape
-        if height != self.size or width != self.size:
-            raise ValueError("Each image size must match the initialized size")
+        self._validate_size(images)
 
         reshaped_polynomials = np.array(self.polynomials).reshape(-1, self.size * self.size)
         reshaped_images = images.reshape(num_images, self.size * self.size)
