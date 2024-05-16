@@ -22,6 +22,6 @@ pip install git+https://github.com/jiadongdan/motif-learn.git
 
 If you find this project useful, please cite:
 
-> **Dan, Jiadong**, Xiaoxu Zhao, Shoucong Ning, Jiong Lu, Kian Ping Loh, Qian He, N. Duane Loh, and Stephen J. Pennycook. "Learning motifs and their hierarchies in atomic resolution microscopy." *Science Advances* 8, no. 15 (**2022**): eabk1005. 📄[paper](https://www.science.org/doi/10.1126/sciadv.abk1005)
+> [**Dan, Jiadong**](https://jiadongdan.github.io/), Xiaoxu Zhao, Shoucong Ning, Jiong Lu, Kian Ping Loh, Qian He, N. Duane Loh, and Stephen J. Pennycook. "Learning motifs and their hierarchies in atomic resolution microscopy." *Science Advances* 8, no. 15 (**2022**): eabk1005. 📄[[paper]](https://www.science.org/doi/10.1126/sciadv.abk1005)
 
 
