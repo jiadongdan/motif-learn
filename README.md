@@ -1,10 +1,6 @@
-# motif-learn - a python package for unsupervised learning of motifs and their hierarchies
+# motif-learn: machine learning in scanning transmission electron microscopy
 
-This repository contains code and data for paper "Learning Motifs and their Hierarchies in Atomic Resolution Microscopy".
-
-This is still actively updated and more related functions and modules are added. Some updated code go beyond the scope of the paper.
-
-You can cite all versions by using the DOI 10.5281/zenodo.6234382. 
+Welcome to **motif-learn**, a Python package designed to apply machine learning techniques to scanning transmission electron microscopy (STEM) data. This tool enables researchers to identify and analyze structural motifs in atomic resolution images efficiently, offering a powerful way to explore materials with defects. 🚀
 
 ## Installation
 
@@ -12,8 +8,20 @@ You can cite all versions by using the DOI 10.5281/zenodo.6234382.
 pip install git+https://github.com/jiadongdan/motif-learn.git
 ```
 
+## How to use motif-learn
+
+* 📘[Introduction to Zernike polynimials.]()
+* 🔧[How to use `ZPs`?]()
+* 🧩[How to extract symmetry information using `zmoments`?]()
+
+## License
+
+`motif-learn` is licensed under the MIT License. For more details, see the LICENSE file.
+
 ## Citation
 
 If you find this project useful, please cite:
 
-> **Dan, Jiadong**, Xiaoxu Zhao, Shoucong Ning, Jiong Lu, Kian Ping Loh, Qian He, N. Duane Loh, and Stephen J. Pennycook. "Learning motifs and their hierarchies in atomic resolution microscopy." *Science Advances* 8, no. 15 (**2022**): eabk1005.
+> **Dan, Jiadong**, Xiaoxu Zhao, Shoucong Ning, Jiong Lu, Kian Ping Loh, Qian He, N. Duane Loh, and Stephen J. Pennycook. "Learning motifs and their hierarchies in atomic resolution microscopy." *Science Advances* 8, no. 15 (**2022**): eabk1005. [paper](https://www.science.org/doi/10.1126/sciadv.abk1005)
+
+
