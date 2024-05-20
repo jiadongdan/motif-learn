@@ -1,5 +1,7 @@
+import numpy as np
 from ._dm4 import DMfile
 from skimage.io import imread
+
 
 def normalize(image, low=0., high=1.):
     img_max = image.max()
