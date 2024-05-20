@@ -1,8 +1,12 @@
+import numpy as np
+
+
 def normalize_image(image, vmin=0., vmax=1.):
-    img_max = image.max()
-    img_min = image.min()
+    img_max = np.max(image)
+    img_min = np.min(image)
     img_norm = (image - img_min) / (img_max - img_min) * (vmax - vmin) + vmin
     return img_norm
+
 
 def standardize_image(image):
     """

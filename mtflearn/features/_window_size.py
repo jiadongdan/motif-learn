@@ -1,5 +1,5 @@
 import numpy as np
-from scipy.signal import correlate
+from scipy.signal import correlate, find_peaks
 from skimage.transform import warp_polar
 from ..utils._preprocessing_image import standardize_image
 
@@ -29,3 +29,20 @@ def radial_profile(data):
     i, j = np.unravel_index(np.argmax(data), shape=data.shape)
     line = warp_polar(data, center=(i, j)).mean(axis=0)[0:i]
     return line
+
+
+def get_characteristic_length(image, standardize=True, debug=False):
+    autocorr = autocorrelation(image=image, standardize=standardize)
+    line_profile = radial_profile(autocorr)
+    peaks, _ = find_peaks(line_profile)
+    if debug:
+        plt.plot(peaks, line_profile[peaks], "x")
+        plt.plot(line_profile)
+    if len(peaks) > 0:
+        return peaks[0]
+    else:
+        raise ValueError("No peak detected in the radial profile.")
+
+
+def get_characteristic_length_fft(image):
+    pass
