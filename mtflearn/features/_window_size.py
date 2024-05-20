@@ -46,6 +46,7 @@ def get_characteristic_length(image, standardize=True, debug=False):
 
 
 def baseline_correction(y,niter=10):
+    
     n = len(y)
     y_ = np.log(np.log(np.sqrt(y +1)+1)+1)
     yy = np.zeros_like(y)
