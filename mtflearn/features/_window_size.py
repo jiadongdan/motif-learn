@@ -1,28 +1,7 @@
 import numpy as np
 from scipy.signal import correlate
 from skimage.transform import warp_polar
-
-
-def standardize_image(image):
-    """
-    Standardize the image to have mean 0 and standard deviation 1.
-
-    Parameters:
-    image : numpy array
-        The input 2D image.
-
-    Returns:
-    standardized_image : numpy array
-        The standardized 2D image.
-    """
-    mean = np.mean(image)
-    std = np.std(image)
-
-    if std == 0:
-        raise ValueError("Standard deviation is zero, can't standardize the image.")
-
-    standardized_image = (image - mean) / std
-    return standardized_image
+from ..utils._preprocessing_image import standardize_image
 
 
 def autocorrelation(image, mode='same', method='fft', standardize=True):
