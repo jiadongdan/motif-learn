@@ -23,6 +23,7 @@ class _LazyLoader:
 # Setup lazy loading for sub-packages.
 features = _LazyLoader('mtflearn.features')
 denoise = _LazyLoader('mtflearn.denoise')
+io = _LazyLoader('mtflearn.io')
 
 
 # Explicit imports for frequently used functions or classes
@@ -31,12 +32,15 @@ from mtflearn.features._zps import ZPs   # Assuming this is lightweight
 from mtflearn.features._zmoments import zmoments
 from mtflearn.denoise._denoise_svd import denoise_svd
 from mtflearn.denoise._denoise_svd import DenoiseSVD
+from mtflearn.io._io_image import load_image
 
 
 __all__ = ['features',
            'denoise',
+           'io',
            'ZPs',
            'zmoments',
            'denoise_svd',
            'DenoiseSVD',
+           'load_image',
            ]
