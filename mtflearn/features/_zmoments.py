@@ -147,9 +147,9 @@ class zmoments:
         else:
             raise ValueError("Invalid Zernike moment array shape, it can only be 2D or 3D.")
 
-    def non_select(self, m_non_select):
-        m_non_select = check_array1d(m_non_select)
-        m_select = np.array([m for m in np.unique(np.abs(self.m)) if m not in m_non_select])
+    def unselect(self, m_unselect):
+        m_unselect = check_array1d(m_unselect)
+        m_select = np.array([m for m in np.unique(np.abs(self.m)) if m not in m_unselect])
         return self.select(m_select)
 
     def rot_maps(self, n_folds):
@@ -160,10 +160,10 @@ class zmoments:
         elif self.data.ndim == 3:
             return np.tensordot(matrix, data2, axes=([1], [0]))
 
-    def mirror_map(self, theta=None, norm_order=None):
+    def mirror_map(self, theta=None, norm_order=None, m_unselect=0):
         if theta is None:
             theta = np.linspace(0, 2 * np.pi, 361)[0:360]
-        zm = self.non_select(0).normalize(order=norm_order)
+        zm = self.unselect(m_unselect=m_unselect).normalize(order=norm_order)
         A = zm.to_complex().data.real
         B = zm.to_complex().data.imag
         part1 = A ** 2 - B ** 2
