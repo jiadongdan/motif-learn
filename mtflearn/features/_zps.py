@@ -4,6 +4,8 @@ from scipy.signal import fftconvolve
 from sklearn.base import BaseEstimator, TransformerMixin
 from typing import Union, Optional, Tuple
 
+from ._zmoments import zmoments
+
 
 class ZPs(BaseEstimator, TransformerMixin):
 
@@ -79,7 +81,7 @@ class ZPs(BaseEstimator, TransformerMixin):
         area = (self.size * self.size) / 4 * np.pi
         zernike_moments = np.dot(reshaped_images, reshaped_polynomials.T) / area
 
-        return zernike_moments
+        return zmoments(data=zernike_moments, n=self.n, m=self.m)
 
     def _transform_pseudo_inverse(self, images: np.ndarray) -> np.ndarray:
         num_images, height, width = images.shape
@@ -91,7 +93,7 @@ class ZPs(BaseEstimator, TransformerMixin):
         pseudo_inv_polynomials = np.linalg.pinv(reshaped_polynomials)
         zernike_moments = reshaped_images.dot(pseudo_inv_polynomials)
 
-        return zernike_moments
+        return zmoments(data=zernike_moments, n=self.n, m=self.m)
 
     def _transform_fft_convolve(self, image: np.ndarray):
         shape = (len(self.n), image.shape[0], image.shape[1])
@@ -102,7 +104,7 @@ class ZPs(BaseEstimator, TransformerMixin):
         f = f[:, np.newaxis, np.newaxis]
         area = np.pi * (self.size) ** 2 / 4
         zernike_moments = f * zernike_moments / area
-        return zernike_moments
+        return zmoments(data=zernike_moments, n=self.n, m=self.m)
 
     def fit_transform(self, X: np.ndarray, y=None, **kwargs) -> np.ndarray:
         return self.fit(X).transform(X)
