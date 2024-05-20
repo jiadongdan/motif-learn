@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.signal import correlate, find_peaks
+from scipy.ndimage import uniform_filter1d
 from skimage.transform import warp_polar
 from ..utils._preprocessing_image import standardize_image
 
@@ -44,5 +45,34 @@ def get_characteristic_length(image, standardize=True, debug=False):
         raise ValueError("No peak detected in the radial profile.")
 
 
-def get_characteristic_length_fft(image):
-    pass
+def baseline_correction(y,niter=10):
+    n = len(y)
+    y_ = np.log(np.log(np.sqrt(y +1)+1)+1)
+    yy = np.zeros_like(y)
+
+    for pp in np.arange(1,niter+1):
+        r1 = y_[pp:n-pp]
+        r2 = (np.roll(y_,-pp)[pp:n-pp] + np.roll(y_,pp)[pp:n-pp])/2
+        yy = np.minimum(r1,r2)
+        y_[pp:n-pp] = yy
+
+    baseline = (np.exp(np.exp(y_)-1)-1)**2 -1
+    return baseline
+
+
+def get_characteristic_length_fft(image, niter=10, size=9, use_log=True, debug=True):
+
+    fft_abs = np.abs(np.fft.fftshift(np.fft.fft2(image)))
+    if use_log:
+        fft_log = np.log(fft_abs + 1)
+    else:
+        fft_log = fft_abs
+    i ,j = np.unravel_index(np.argmax(fft_log), shape=image.shape)
+    y = warp_polar(fft_log, center=(i, j)).mean(axis=0)[0:i]
+    bg = baseline_correction(y, niter=niter)
+    y1 = y - bg
+    y2 = uniform_filter1d(y1,size=size)
+
+    ind = np.argmax(y2)
+    size = image.shape[0] / ind
+    return size
