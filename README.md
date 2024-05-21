@@ -1,3 +1,5 @@
+![Logo](logo.png)
+
 # motif-learn: machine learning in scanning transmission electron microscopy
 
 Welcome to **motif-learn**, a Python package designed to apply machine learning techniques to scanning transmission electron microscopy (STEM) data. This tool enables researchers to identify and analyze structural motifs in atomic resolution images efficiently, offering a powerful way to explore materials with defects. 🚀
