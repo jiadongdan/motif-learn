@@ -1,9 +1,31 @@
 import numpy as np
 
 
-def normalize_image(image, vmin=0., vmax=1.):
+def normalize_image(image, vmin=0.0, vmax=1.0):
+    """
+    Normalize an image to a specified range [vmin, vmax].
+
+    Parameters:
+    image (np.ndarray): Input image array.
+    vmin (float): Minimum value of the normalized image. Default is 0.0.
+    vmax (float): Maximum value of the normalized image. Default is 1.0.
+
+    Returns:
+    np.ndarray: Normalized image array.
+    """
+    if not isinstance(image, np.ndarray):
+        raise TypeError("Input image must be a numpy array.")
+    if image.size == 0:
+        raise ValueError("Input image cannot be empty.")
+    if vmin >= vmax:
+        raise ValueError("vmin must be less than vmax.")
+
     img_max = np.max(image)
     img_min = np.min(image)
+
+    if img_max == img_min:
+        raise ValueError("Image has no variation (max equals min).")
+
     img_norm = (image - img_min) / (img_max - img_min) * (vmax - vmin) + vmin
     return img_norm
 
