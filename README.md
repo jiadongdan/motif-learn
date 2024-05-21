@@ -10,9 +10,10 @@ pip install git+https://github.com/jiadongdan/motif-learn.git
 
 ## How to use motif-learn👨‍🏫
 
-* 📘[Introduction to Zernike polynimials.]()
-* 🔧[How to use `ZPs`?]()
-* 🧩[How to extract symmetry information using `zmoments`?]()
+* 📘[Introduction to Zernike polynimials.](https://github.com/jiadongdan/motif-learn/blob/main/notebooks/1%20Introduction%20to%20Zernike%20polynomials.ipynb)
+* 🔧[How to use `ZPs`?](https://github.com/jiadongdan/motif-learn/blob/main/notebooks/2%20How%20to%20use%20ZPs.ipynb)
+* 🔷[How to extract symmetry information using `zmoments`?](https://github.com/jiadongdan/motif-learn/blob/main/notebooks/3%20How%20to%20extract%20symmetry%20maps.ipynb)
+* 🧩[How to automatically estimate patch size from image?](https://github.com/jiadongdan/motif-learn/blob/main/notebooks/4%20Automatic%20determination%20of%20patch%20size.ipynb)
 
 ## License⚖️
 
