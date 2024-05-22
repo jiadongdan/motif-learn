@@ -1,4 +1,4 @@
-![Logo](logo.png)
+![Logo](data/motif-learn logo.png)
 
 # motif-learn: machine learning in scanning transmission electron microscopy
 
