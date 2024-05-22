@@ -1,4 +1,4 @@
-![Logo](notebooks/motif-learn logo.png)
+![Logo](notebooks/motif-learn%20logo.png)
 
 # motif-learn: machine learning in scanning transmission electron microscopy
 
