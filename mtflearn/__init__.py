@@ -24,6 +24,9 @@ class _LazyLoader:
 features = _LazyLoader('mtflearn.features')
 denoise = _LazyLoader('mtflearn.denoise')
 io = _LazyLoader('mtflearn.io')
+clustering = _LazyLoader('mtflearn.clustering')
+utils = _LazyLoader('mtflearn.utils')
+
 
 
 # Explicit imports for frequently used functions or classes
@@ -38,6 +41,8 @@ from mtflearn.io._io_image import load_image
 __all__ = ['features',
            'denoise',
            'io',
+           'clustering',
+           'utils',
            'ZPs',
            'zmoments',
            'denoise_svd',
