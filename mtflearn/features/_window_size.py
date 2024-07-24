@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 from scipy.signal import correlate, find_peaks
 from scipy.ndimage import uniform_filter1d
 from skimage.transform import warp_polar

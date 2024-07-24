@@ -1,5 +1,6 @@
 import numpy as np
-
+from skimage.morphology import disk
+from skimage.morphology import white_tophat
 
 def normalize_image(image, vmin=0.0, vmax=1.0):
     """
@@ -50,3 +51,8 @@ def standardize_image(image):
 
     standardized_image = (image - mean) / std
     return standardized_image
+
+
+def remove_bg(img, disk_size):
+    selem = disk(disk_size)
+    return white_tophat(img, selem)

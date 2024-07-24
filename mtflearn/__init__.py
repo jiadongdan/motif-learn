@@ -37,7 +37,6 @@ from mtflearn.denoise._denoise_svd import denoise_svd
 from mtflearn.denoise._denoise_svd import DenoiseSVD
 from mtflearn.io._io_image import load_image
 
-
 __all__ = ['features',
            'denoise',
            'io',
