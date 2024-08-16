@@ -7,6 +7,7 @@ from ._window_size import get_characteristic_length
 from ._window_size import get_characteristic_length_fft
 from ._local_max import local_max
 from ._keypoint import KeyPoints
+from ._dimension_reduction import pca
 
 __all__ = ['ZPs',
            'zmoments',
@@ -17,4 +18,5 @@ __all__ = ['ZPs',
            'get_characteristic_length_fft',
            'local_max',
            'KeyPoints',
+           'pca',
            ]
