@@ -388,6 +388,18 @@ def read_tag_data(dmfile, tag):
         return None
 
 
+def get_file_extension(filename: str) -> str:
+    # Split the filename by the last period
+    parts = filename.rsplit('.', 1)
+
+    # If there's no period, return None
+    if len(parts) == 1:
+        return None
+
+    # Return the extension in lower case
+    return parts[1].lower()
+
+
 class DMfile:
     def __init__(self, file_name):
         self.file_handle = open(file_name, 'rb')
@@ -395,11 +407,16 @@ class DMfile:
         self.endian = _get_endian(self.file_handle)
         self.header = read_header(self.file_handle)
         self.root = read_root_dir(self.file_handle)
+        self.file_extension = get_file_extension(file_name)
 
     @property
     def data(self):
         tags = read_directory(self.file_handle)
-        image_data_tag = tags.named_subdirs['ImageList'].unnamed_subdirs[1].named_subdirs['ImageData']
+        # .dm4 file have two sets of image_data_tags, the second one is for dm4 (dm3 files use the first one)
+        if self.file_extension == 'dm4':
+            image_data_tag = tags.named_subdirs['ImageList'].unnamed_subdirs[1].named_subdirs['ImageData']
+        elif self.file_extension == 'dm3':
+            image_data_tag = tags.named_subdirs['ImageList'].unnamed_subdirs[0].named_subdirs['ImageData']
         image_tag = image_data_tag.named_tags['Data']
         num_dim = len(image_data_tag.named_subdirs['Dimensions'].unnamed_tags)
         XDim = read_tag_data(self.file_handle, image_data_tag.named_subdirs['Dimensions'].unnamed_tags[0])
