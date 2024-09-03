@@ -29,4 +29,3 @@ If you find this project useful, please cite:
 
 > [**Dan, Jiadong**](https://jiadongdan.github.io/), Cheng Zhang, Xiaoxu Zhao and N. Duane Loh. " Symmetry quantification and segmentation in STEM imaging through Zernike moments." *Chinese Physics B*, (**2024**). 📄[[paper]](https://iopscience.iop.org/article/10.1088/1674-1056/ad51f4)
 
-
