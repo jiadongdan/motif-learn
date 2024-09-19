@@ -5,6 +5,15 @@ def nm2j(n, m):
     n = np.atleast_1d(n)
     n = np.array(n)
     m = np.array(m)
+
+    # Validate inputs
+    if not np.all(n >= 0):
+        raise ValueError("Radial order n must be non-negative.")
+    if not np.all(np.abs(m) <= n):
+        raise ValueError("Azimuthal frequency m must satisfy |m| ≤ n.")
+    if not np.all((n - np.abs(m)) % 2 == 0):
+        raise ValueError("n - |m| must be even.")
+    
     j = ((n + 2) * n + m) // 2
     return j
 
@@ -12,6 +21,17 @@ def nm2j(n, m):
 def nm2j_complex(n, m):
     n = np.atleast_1d(n)
     m = np.atleast_1d(m)
+    
+    # Validate inputs
+    if not np.all(n >= 0):
+        raise ValueError("Radial order n must be non-negative.")
+    if not np.all(m >= 0):
+        raise ValueError("Azimuthal frequency m must be non-negative.")
+    if not np.all(np.abs(m) <= n):
+        raise ValueError("Azimuthal frequency m must satisfy |m| ≤ n.")
+    if not np.all((n - np.abs(m)) % 2 == 0):
+        raise ValueError("n - |m| must be even.")
+    
     i = np.array(n ** 2 + 2 * n + 2 * m)
     mask = np.array(n) % 2 == 0
     i[mask] = i[mask] // 4
