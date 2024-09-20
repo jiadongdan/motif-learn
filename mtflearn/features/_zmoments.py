@@ -1,20 +1,58 @@
 import numpy as np
 
-
 def nm2j(n, m):
-    n = np.atleast_1d(n)
-    n = np.array(n)
-    m = np.array(m)
+    """
+    Convert Zernike radial order `n` and azimuthal frequency `m` to a single index `j`.
+
+    Parameters
+    ----------
+    n : int or array_like of int
+        Radial order(s), must be non-negative integer(s).
+    m : int or array_like of int
+        Azimuthal frequency (frequencies), must satisfy |m| ≤ n and (n - |m|) even.
+
+    Returns
+    -------
+    j : int or ndarray of int
+        Single index corresponding to the given `n` and `m`.
+
+    Raises
+    ------
+    ValueError
+        If input validation fails.
+
+    Notes
+    -----
+    The mapping from (n, m) to `j` is given by:
+
+        j = ((n + 2) * n + m) // 2
+
+    This mapping ensures that each valid pair (n, m) maps to a unique integer `j`.
+
+    Examples
+    --------
+    >>> nm2j(0, 0)
+    0
+    >>> nm2j([0, 1, 1], [0, -1, 1])
+    array([0, 1, 2])
+    """
+    n = np.asarray(n, dtype=int)
+    m = np.asarray(m, dtype=int)
+
+    if n.shape != m.shape:
+        raise ValueError("`n` and `m` must have the same shape.")
 
     # Validate inputs
-    if not np.all(n >= 0):
-        raise ValueError("Radial order n must be non-negative.")
-    if not np.all(np.abs(m) <= n):
-        raise ValueError("Azimuthal frequency m must satisfy |m| ≤ n.")
-    if not np.all((n - np.abs(m)) % 2 == 0):
-        raise ValueError("n - |m| must be even.")
-    
+    if np.any(n < 0):
+        raise ValueError("Radial order `n` must be non-negative.")
+    if np.any(np.abs(m) > n):
+        raise ValueError("Azimuthal frequency `m` must satisfy |m| ≤ n.")
+    if np.any((n - np.abs(m)) % 2 != 0):
+        raise ValueError("`n - |m|` must be even.")
+
+    # Compute `j`
     j = ((n + 2) * n + m) // 2
+
     return j
 
 
