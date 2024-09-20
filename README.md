@@ -1,3 +1,5 @@
+![example workflow](https://github.com/jiadongdan/motif-learn/actions/workflows/WORKFLOW-FILE/badge.svg)
+
 ![Logo](notebooks/motif-learn%20logo.png)
 
 # motif-learn: machine learning in scanning transmission electron microscopy
