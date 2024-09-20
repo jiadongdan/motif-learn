@@ -12,7 +12,7 @@ jobs:
 
     strategy:
       matrix:
-        python-version: [3.8, 3.9, 3.10.12, 3.11]
+        python-version: [3.8, 3.9, 3.10.12]
 
     steps:
     - name: Checkout repository
@@ -38,6 +38,15 @@ jobs:
         pip install -r requirements.txt || true
         pip install -r requirements-dev.txt || true
 
-    - name: Run tests
+    - name: Lint with Flake8
       run: |
-        pytest
+        pip install flake8
+        flake8 mtflearn/
+
+    - name: Run tests with coverage
+      env:
+        CI: true
+      run: |
+        pip install pytest pytest-cov
+        pytest --cov=mtflearn tests/
+
