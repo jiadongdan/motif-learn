@@ -1,4 +1,4 @@
-![example workflow](https://github.com/jiadongdan/motif-learn/actions/workflows/ci.yml/badge.svg)
+![workflow status](https://github.com/jiadongdan/motif-learn/actions/workflows/ci.yml/badge.svg)
 
 ![Logo](notebooks/motif-learn%20logo.png)
 
