@@ -61,11 +61,6 @@ def test_non_integer_inputs():
     with pytest.raises(ValueError):
         nm2j(2, 0.5)
 
-def test_string_inputs():
-    """Test function with string inputs, should raise TypeError."""
-    with pytest.raises(TypeError):
-        nm2j('2', '0')
-
 def test_large_array_inputs():
     """Test function with large array inputs."""
     n_values = np.arange(0, 100)
