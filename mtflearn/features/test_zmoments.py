@@ -7,9 +7,9 @@ def test_scalar_inputs():
     assert nm2j(0, 0) == 0
     assert nm2j(1, -1) == 1
     assert nm2j(2, 0) == 4
-    assert nm2j(3, 1) == 7
-    assert nm2j(4, -4) == 8
-    assert nm2j(5, 3) == 13
+    assert nm2j(3, 1) == 8
+    assert nm2j(4, -4) == 10
+    assert nm2j(5, 3) == 19
 
 def test_array_inputs():
     """Test function with valid array inputs."""

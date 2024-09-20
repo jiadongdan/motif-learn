@@ -1,5 +1,7 @@
 import numpy as np
 
+import numpy as np
+
 def nm2j(n, m):
     """
     Convert Zernike radial order `n` and azimuthal frequency `m` to a single index `j`.
@@ -36,11 +38,20 @@ def nm2j(n, m):
     >>> nm2j([0, 1, 1], [0, -1, 1])
     array([0, 1, 2])
     """
-    n = np.asarray(n, dtype=int)
-    m = np.asarray(m, dtype=int)
+    n = np.asarray(n)
+    m = np.asarray(m)
 
     if n.shape != m.shape:
         raise ValueError("`n` and `m` must have the same shape.")
+
+    # Validate that n and m are integer-valued
+    if not np.all(np.isclose(n % 1, 0)):
+        raise ValueError("Radial order `n` must be integer-valued.")
+    if not np.all(np.isclose(m % 1, 0)):
+        raise ValueError("Azimuthal frequency `m` must be integer-valued.")
+
+    n = n.astype(int)
+    m = m.astype(int)
 
     # Validate inputs
     if np.any(n < 0):
@@ -58,7 +69,6 @@ def nm2j(n, m):
         return j.item()
     else:
         return j
-
 
 def nm2j_complex(n, m):
     n = np.atleast_1d(n)
