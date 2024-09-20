@@ -53,7 +53,11 @@ def nm2j(n, m):
     # Compute `j`
     j = ((n + 2) * n + m) // 2
 
-    return j
+    # Return scalar if inputs are scalars
+    if j.shape == ():
+        return j.item()
+    else:
+        return j
 
 
 def nm2j_complex(n, m):
