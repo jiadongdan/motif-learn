@@ -38,10 +38,10 @@ jobs:
         pip install -r requirements.txt || true
         pip install -r requirements-dev.txt || true
 
-    - name: Run tests with coverage
+    - name: Run tests
       env:
         CI: true
       run: |
-        pip install pytest pytest-cov
-        pytest --cov=mtflearn tests/
+        pip install pytest
+        pytest
 
