@@ -35,7 +35,7 @@ from mtflearn.features._zps import ZPs   # Assuming this is lightweight
 from mtflearn.features._zmoments import zmoments
 from mtflearn.denoise._denoise_svd import denoise_svd
 from mtflearn.denoise._denoise_svd import DenoiseSVD
-from mtflearn.io._io_image import load_image
+from mtflearn.io._io import load_image
 
 __all__ = ['features',
            'denoise',
