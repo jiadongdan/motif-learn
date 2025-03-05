@@ -15,6 +15,8 @@ from .vnn import vnn_graph
 from .vnn import estimate_d
 from .vnn import vnn_distance
 
+from ._lattice_graph import LatticeGraph1
+
 __all__ = ['PlanarGraph',
            'LatticeGraph',
            'matrix2ijs',
@@ -30,4 +32,5 @@ __all__ = ['PlanarGraph',
            'vnn_graph',
            'estimate_d',
            'vnn_distance',
+           'LatticeGraph1',
            ]
