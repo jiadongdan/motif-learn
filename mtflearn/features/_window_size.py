@@ -78,3 +78,4 @@ def get_characteristic_length_fft(image, niter=10, size=9, use_log=True, debug=T
     ind = np.argmax(y2)
     size = image.shape[0] / ind
     return size
+

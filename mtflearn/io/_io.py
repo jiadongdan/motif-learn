@@ -1,6 +1,9 @@
+import os
 import numpy as np
 from skimage.io import imread
 from pathlib import Path
+from typing import Union
+from os import PathLike
 from ._dm4 import DMfile
 from ._dm_ncempy import dmReader
 
@@ -12,16 +15,24 @@ def normalize(image, low=0., high=1.):
     return img_norm
 
 
-def load_image(file_name, normalized=False):
-    file_extension = np.char.split(file_name, sep='.').tolist()[-1]
-    file_extension = '.' + file_extension
-    # file_extension = os.path.splitext(file_name)[1]
-    if file_extension.lower() in ['.dm4', '.dm3']:
-        img = DMfile(file_name).data
+def load_image(
+        file_name: Union[str, PathLike],
+        normalized: bool = False
+) -> np.ndarray:
+    # turn any PathLike (including pathlib.Path) into a str
+    fn = os.fspath(file_name)
+    # split off the extension
+    _, ext = os.path.splitext(fn)
+    ext = ext.lower()
+
+    if ext in ('.dm4', '.dm3'):
+        img = DMfile(fn).data
     else:
-        img = imread(file_name)
-    if normalized is True:
+        img = imread(fn)
+
+    if normalized:
         img = normalize(img)
+
     return img
 
 def load_dm(filename):

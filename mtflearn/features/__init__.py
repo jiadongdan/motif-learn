@@ -6,7 +6,7 @@ from ._window_size import compute_autocorrelation
 from ._window_size import radial_profile
 from ._window_size import get_characteristic_length
 from ._window_size import get_characteristic_length_fft
-from ._local_max import local_max
+from ._local_max_v2 import local_max
 from ._keypoint import KeyPoints
 from ._dimension_reduction import pca
 from ._zmoments import nm2j

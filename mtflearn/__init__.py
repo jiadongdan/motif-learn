@@ -26,6 +26,8 @@ denoise = _LazyLoader('mtflearn.denoise')
 io = _LazyLoader('mtflearn.io')
 clustering = _LazyLoader('mtflearn.clustering')
 utils = _LazyLoader('mtflearn.utils')
+datasets = _LazyLoader('mtflearn.datasets')
+metrics = _LazyLoader('mtflearn.metrics')
 
 
 
@@ -42,6 +44,8 @@ __all__ = ['features',
            'io',
            'clustering',
            'utils',
+           'datasets',
+           'metrics',
            'ZPs',
            'zmoments',
            'denoise_svd',

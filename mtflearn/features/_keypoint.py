@@ -69,7 +69,8 @@ class KeyPoints:
             s1 = size // 2
             s2 = size // 2 + 1
 
-        pts = self.pts.astype(int)
+        # pts = self.pts.astype(int)
+        pts = np.rint(self.pts).astype(int)
         if flat:
             self.patches = np.array([self.img[y - s1:y + s2, x - s1:x + s2].flatten() for (x, y) in pts])
         else:
