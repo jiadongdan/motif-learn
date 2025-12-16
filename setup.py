@@ -12,6 +12,7 @@ setup(
   install_requires=[            # I get to this in a second
           'numpy',
           'scipy',
+          'tqdm',
           'numba',
           'scikit-image',
           'scikit-learn',
