@@ -154,6 +154,7 @@ def construct_rot_maps_matrix(n_folds, m):
         row = np.zeros(len(m))
         is_current_fold = (m % n_fold == 0) & (m > 1)
         is_special_case = (m == 0) | (m == 1)
+        # is_special_case = (m == 0)
         not_covered = ~(is_current_fold | is_special_case)
 
         # Set conditions based on `m`
@@ -191,6 +192,10 @@ class zmoments:
         else:
             return self
 
+    def to_real(self):
+        pass
+
+
     def normalize(self, order=None):
         # Check the dimension of the array
         if self.data.ndim == 2:
@@ -222,23 +227,42 @@ class zmoments:
         m_unselect = check_array1d(m_unselect)
         m_select = np.array([m for m in np.unique(np.abs(self.m)) if m not in m_unselect])
         return self.select(m_select)
-
-    def rot_maps(self, n_folds, p=2):
-        # Normalize data before squaring
-        if self.data.ndim == 2:
-            norms = np.linalg.norm(self.data, ord=p, axis=1, keepdims=True)
-            normalized_data = self.data / norms
-        elif self.data.ndim == 3:
-            norms = np.linalg.norm(self.data, ord=p, axis=0, keepdims=True)
-            normalized_data = self.data / norms
+    @property
+    def is_complex(self):
+        return self.data.dtype == 'complex128'
+    def rotate(self, theta):
+        if not self.is_complex:
+            zm_complex = self.to_complex()
         else:
+            zm_complex = self
+        data_complex = zm_complex.data * np.exp(-np.deg2rad(theta)*1j)
+        return zmoments(data=data_complex, n=self.n, m=self.m)
+
+
+    def rot_maps(self, n_folds, p=2, m_unselect=None):
+        # Normalize data before squaring (if p is not None)
+        if self.data.ndim not in (2, 3):
             raise ValueError("Input must be a 2D or 3D array.")
+        if m_unselect is None:
+            m_unselect = (0, 1)
+        elif 0 not in m_unselect:
+            raise ValueError("m=0 must be included in m_unselect.")
+
+        # Normalize if p is not None, otherwise use data as-is
+        if p is not None:
+            normalized_data = self.unselect(m_unselect).normalize(order=p).data
+            # if unselect() is used, matrix changes too!
+            matrix = construct_rot_maps_matrix(n_folds, self.unselect(m_unselect).m)
+        else:
+            normalized_data = self.unselect(m_unselect).data
+            matrix = construct_rot_maps_matrix(n_folds, self.unselect(m_unselect).m)
 
         data2 = normalized_data ** 2
-        matrix = construct_rot_maps_matrix(n_folds, self.m)
+
         if self.data.ndim == 2:
             return np.dot(data2, matrix.T)
-        elif self.data.ndim == 3:
+        else:  # ndim == 3
+            print(matrix.shape, data2.shape)
             return np.tensordot(matrix, data2, axes=([1], [0]))
 
     def mirror_map(self, theta=None, norm_order=2, m_unselect=[0, 1]):

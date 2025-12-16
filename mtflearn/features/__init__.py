@@ -1,6 +1,7 @@
 from ._zps import ZPs
 from ._zmoments import zmoments
 from ._zmoments import construct_rot_maps_matrix
+from ._zmoments import construct_complex_matrix
 from ._window_size import autocorrelation
 from ._window_size import compute_autocorrelation
 from ._window_size import radial_profile
@@ -15,6 +16,7 @@ from ._zmoments import nm2j_complex
 __all__ = ['ZPs',
            'zmoments',
            'construct_rot_maps_matrix',
+           'construct_complex_matrix',
            'autocorrelation',
            'compute_autocorrelation',
            'radial_profile',
