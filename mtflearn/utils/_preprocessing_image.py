@@ -2,33 +2,47 @@ import numpy as np
 from skimage.morphology import disk
 from skimage.morphology import white_tophat
 
-def normalize_image(image, vmin=0.0, vmax=1.0):
+
+def normalize_image(img, mode="minmax", eps=1e-8, vmin=0.0, vmax=1.0):
     """
-    Normalize an image to a specified range [vmin, vmax].
+    Normalize a 2D (or multi-channel) NumPy image.
 
-    Parameters:
-    image (np.ndarray): Input image array.
-    vmin (float): Minimum value of the normalized image. Default is 0.0.
-    vmax (float): Maximum value of the normalized image. Default is 1.0.
+    Parameters
+    ----------
+    img : np.ndarray
+        Input image of shape (H, W) or (H, W, C).
+    mode : str
+        "l1", "l2", or "minmax".
+    eps : float
+        Small constant to avoid division by zero.
+    vmin : float
+        Lower bound used for min-max normalization.
+    vmax : float
+        Upper bound used for min-max normalization.
 
-    Returns:
-    np.ndarray: Normalized image array.
+    Returns
+    -------
+    np.ndarray
+        Normalized image with the same shape.
     """
-    if not isinstance(image, np.ndarray):
-        raise TypeError("Input image must be a numpy array.")
-    if image.size == 0:
-        raise ValueError("Input image cannot be empty.")
-    if vmin >= vmax:
-        raise ValueError("vmin must be less than vmax.")
+    img = img.astype(np.float32, copy=False)
 
-    img_max = np.max(image)
-    img_min = np.min(image)
+    if mode == "l1":
+        norm = np.sum(np.abs(img)) + eps
+        return img / norm
 
-    if img_max == img_min:
-        raise ValueError("Image has no variation (max equals min).")
+    elif mode == "l2":
+        norm = np.sqrt(np.sum(img ** 2) + eps)
+        return img / norm
 
-    img_norm = (image - img_min) / (img_max - img_min) * (vmax - vmin) + vmin
-    return img_norm
+    elif mode == "minmax":
+        x_min = img.min()
+        x_max = img.max()
+        scale = (x_max - x_min) + eps
+        return vmin + (img - x_min) * (vmax - vmin) / scale
+
+    else:
+        raise ValueError("mode must be 'l1', 'l2', or 'minmax'.")
 
 
 def standardize_image(image):

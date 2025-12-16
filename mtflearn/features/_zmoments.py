@@ -1,7 +1,5 @@
 import numpy as np
-
-import numpy as np
-
+from sklearn.preprocessing import normalize
 def nm2j(n, m):
     """
     Convert Zernike radial order `n` and azimuthal frequency `m` to a single index `j`.
@@ -207,6 +205,7 @@ class zmoments:
             raise ValueError("Input must be a 2D or 3D array.")
         return zmoments(data=normalized_data, n=self.n, m=self.m)
 
+
     def select(self, m_select):
         m_select = check_array1d(m_select)
         m_select = np.unique(np.abs(m_select))
@@ -232,21 +231,29 @@ class zmoments:
         elif self.data.ndim == 3:
             return np.tensordot(matrix, data2, axes=([1], [0]))
 
-    def mirror_map(self, theta=None, norm_order=None, m_unselect=[0, 1]):
+    def mirror_map(self, theta=None, norm_order=2, m_unselect=[0, 1]):
         if theta is None:
             theta = np.linspace(0, 2 * np.pi, 361)[0:360]
-        zm = self.unselect(m_unselect=m_unselect).normalize(order=norm_order)
+        if norm_order is None:
+            zm = self.unselect(m_unselect=m_unselect)
+        else:
+            zm = self.unselect(m_unselect=m_unselect).normalize(order=norm_order)
+            #zm_temp = self.unselect(m_unselect=m_unselect)
+            #zm = zm_temp.normalize(order=norm_order)
+
         A = zm.to_complex().data.real
         B = zm.to_complex().data.imag
         part1 = A ** 2 - B ** 2
         part2 = 2 * A * B
         data = np.vstack([part1, part2])
+        # self.moments_data = data
 
-        # Notice
+    # Notice
         ms = zm.to_complex().m
         cosmt = np.array([np.cos(m * t) for t in theta for m in ms]).reshape(len(theta), -1)
         sinmt = np.array([np.sin(m * t) for t in theta for m in ms]).reshape(len(theta), -1)
-        matrix = np.hstack([cosmt, sinmt])  # 360 x 60
+        matrix = np.hstack([cosmt, sinmt])  # 360 x N
+        self.weights = matrix
         if self.data.ndim == 2:
             return np.dot(data, matrix.T).max(axis=1)
         elif self.data.ndim == 3:
