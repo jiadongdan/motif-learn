@@ -224,7 +224,17 @@ class zmoments:
         return self.select(m_select)
 
     def rot_maps(self, n_folds):
-        data2 = self.data ** 2
+        # Normalize data before squaring
+        if self.data.ndim == 2:
+            norms = np.linalg.norm(self.data, axis=1, keepdims=True)
+            normalized_data = self.data / norms
+        elif self.data.ndim == 3:
+            norms = np.linalg.norm(self.data, axis=0, keepdims=True)
+            normalized_data = self.data / norms
+        else:
+            raise ValueError("Input must be a 2D or 3D array.")
+
+        data2 = normalized_data ** 2
         matrix = construct_rot_maps_matrix(n_folds, self.m)
         if self.data.ndim == 2:
             return np.dot(data2, matrix.T)
