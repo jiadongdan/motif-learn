@@ -223,13 +223,13 @@ class zmoments:
         m_select = np.array([m for m in np.unique(np.abs(self.m)) if m not in m_unselect])
         return self.select(m_select)
 
-    def rot_maps(self, n_folds):
+    def rot_maps(self, n_folds, norm_order=2):
         # Normalize data before squaring
         if self.data.ndim == 2:
-            norms = np.linalg.norm(self.data, axis=1, keepdims=True)
+            norms = np.linalg.norm(self.data, ord=norm_order, axis=1, keepdims=True)
             normalized_data = self.data / norms
         elif self.data.ndim == 3:
-            norms = np.linalg.norm(self.data, axis=0, keepdims=True)
+            norms = np.linalg.norm(self.data, ord=norm_order, axis=0, keepdims=True)
             normalized_data = self.data / norms
         else:
             raise ValueError("Input must be a 2D or 3D array.")
