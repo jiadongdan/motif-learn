@@ -25,6 +25,25 @@ class ZPs(BaseEstimator, TransformerMixin):
         if size <= 0:
             raise ValueError("size must be positive.")
 
+        # Hard error for extreme cases
+        if n_max > size:
+            raise ValueError(
+                f"n_max={n_max} exceeds size={size}. This will produce "
+                f"meaningless results. Use n_max <= {size//2} for accurate moments."
+            )
+
+        # Single warning for suboptimal but usable range
+        if n_max > size / 3:
+            recommended_max = size // 3
+            warnings.warn(
+                f"n_max={n_max} exceeds recommended limit of size/3≈{recommended_max}. "
+                f"High-order Zernike moments may suffer from aliasing and numerical "
+                f"errors. For accurate results, use n_max <= {size//2}; for maximum "
+                f"stability, use n_max <= {recommended_max}.",
+                UserWarning,
+                stacklevel=2
+            )
+
         self.n_max = n_max
         self.size = size
         self.n, self.m, self.polynomials = self._generate_polynomials()
