@@ -118,7 +118,7 @@ class ZPs(BaseEstimator, TransformerMixin):
             raise ValueError("Images must be 2D or 3D array.")
 
     def _validate_size(self, images: np.ndarray) -> None:
-        """Validate that image size matches polynomial size."""
+        """Validate that image size is appropriate for the method used."""
         if images.ndim == 2:
             height, width = images.shape
         elif images.ndim == 3:
@@ -126,11 +126,21 @@ class ZPs(BaseEstimator, TransformerMixin):
         else:
             raise ValueError("Images must be 2D or 3D array.")
 
-        if height != self.size or width != self.size:
-            raise ValueError(
-                f"Image size ({height}x{width}) must match polynomial size "
-                f"({self.size}x{self.size})"
-            )
+        # For 3D (batch processing with dot product), size must match exactly
+        if images.ndim == 3:
+            if height != self.size or width != self.size:
+                raise ValueError(
+                    f"For batch processing, image size ({height}x{width}) must match "
+                    f"polynomial size ({self.size}x{self.size})"
+                )
+
+        # For 2D (FFT convolution), image must be at least as large as polynomials
+        else:  # images.ndim == 2
+            if height < self.size or width < self.size:
+                raise ValueError(
+                    f"For FFT convolution, image size ({height}x{width}) must be at least "
+                    f"as large as polynomial size ({self.size}x{self.size})"
+                )
 
     def _transform_dot_product(self, images: np.ndarray) -> zmoments:
         """Transform using dot product method."""
@@ -165,6 +175,19 @@ class ZPs(BaseEstimator, TransformerMixin):
 
         area = np.pi * self.size ** 2 / 4
         zernike_moments = f * zernike_moments / area
+
+        # Mark invalid edge regions as NaN
+        # For mode='same', edges where polynomial extends beyond image are invalid
+        # Edge sizes follow scipy.signal.fftconvolve convention:
+        #   - Odd kernel size: symmetric edges
+        #   - Even kernel size: asymmetric (1 more pixel invalid on right/bottom)
+        edge_before = (self.size - 1) // 2
+        edge_after = self.size - 1 - edge_before
+
+        zernike_moments[:, :edge_before, :] = np.nan           # top edge
+        zernike_moments[:, -edge_after:, :] = np.nan           # bottom edge
+        zernike_moments[:, :, :edge_before] = np.nan           # left edge
+        zernike_moments[:, :, -edge_after:] = np.nan           # right edge
 
         return zmoments(data=zernike_moments, n=self.n, m=self.m)
 
