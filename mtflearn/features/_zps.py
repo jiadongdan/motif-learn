@@ -135,6 +135,10 @@ class ZPs(BaseEstimator, TransformerMixin):
         zernike_moments = fftconvolve(image_broadcast, self.polynomials, mode='same', axes=[1, 2])
 
         # Parity-based sign correction: f = (-1)^n
+        # FFT convolution computes ∫∫ f(x,y) * V_nm(-x,-y) dx dy (note the sign flip)
+        # but Zernike moments require ∫∫ f(x,y) * V_nm(x,y) dx dy
+        # Due to Zernike symmetry: V_nm(-x,-y) = (-1)^n * V_nm(x,y)
+        # Therefore, we must multiply by (-1)^n to correct for this coordinate inversion
         f = 1 - self.n % 2
         f[f == 0] = -1
         f = f[:, np.newaxis, np.newaxis]
