@@ -1,5 +1,5 @@
 import numpy as np
-from sklearn.preprocessing import normalize
+
 def nm2j(n, m):
     """
     Convert Zernike radial order `n` and azimuthal frequency `m` to a single index `j`.
@@ -238,9 +238,42 @@ def construct_rot_maps_matrix(n_folds, m):
 class zmoments:
 
     def __init__(self, data, n, m):
-        self.data = data
-        self.n = n
-        self.m = m
+        # Convert to numpy arrays if needed
+        self.n = np.asarray(n)
+        self.m = np.asarray(m)
+        self.data = np.asarray(data)
+
+        # Validate shapes
+        if self.n.shape != self.m.shape:
+            raise ValueError("`n` and `m` must have the same shape.")
+
+        # Validate data shape matches n, m
+        expected_len = len(self.n)
+        if self.data.ndim == 2:
+            if self.data.shape[1] != expected_len:
+                raise ValueError(
+                    f"Data shape mismatch: expected {expected_len} moments "
+                    f"but got {self.data.shape[1]}"
+                )
+        elif self.data.ndim == 3:
+            if self.data.shape[0] != expected_len:
+                raise ValueError(
+                    f"Data shape mismatch: expected {expected_len} moments "
+                    f"but got {self.data.shape[0]}"
+                )
+        else:
+            raise ValueError("Data must be 2D or 3D array.")
+
+        # Sort by (n, m) and reorder data accordingly
+        sort_idx = np.lexsort((self.m, self.n))
+        self.n = self.n[sort_idx]
+        self.m = self.m[sort_idx]
+
+        # Reorder data to match sorted indices
+        if self.data.ndim == 2:
+            self.data = self.data[:, sort_idx]
+        elif self.data.ndim == 3:
+            self.data = self.data[sort_idx, :, :]
 
     def to_complex(self):
         if self.data.dtype != complex:
@@ -320,63 +353,121 @@ class zmoments:
 
     @property
     def is_complex(self):
-        return self.data.dtype == 'complex128'
+        return np.iscomplexobj(self.data)
 
     def rotate(self, theta):
-        zm_complex = self.to_complex()
-        data_complex = zm_complex.data * np.exp(-np.deg2rad(theta)*1j)
-        return zmoments(data=data_complex, n=zm_complex.n, m=zm_complex.m)
+        """
+        Rotate Zernike moments by angle theta.
 
+        Parameters
+        ----------
+        theta : float
+            Rotation angle in degrees.
+
+        Returns
+        -------
+        zmoments
+            Rotated Zernike moments in complex representation.
+
+        Notes
+        -----
+        The rotation of Zernike moments follows the property:
+        Z_n^m(ρ, φ+θ) = Z_n^m(ρ, φ) * exp(-imθ)
+
+        where m is the azimuthal frequency.
+        """
+        zm_complex = self.to_complex()
+
+        # Rotation formula: multiply by exp(-imθ)
+        # Convert theta from degrees to radians
+        theta_rad = np.deg2rad(theta)
+        rotation_factor = np.exp(-1j * theta_rad * zm_complex.m)
+
+        # Apply rotation with proper broadcasting
+        if zm_complex.data.ndim == 2:
+            # Shape: (num_samples, num_moments)
+            # rotation_factor shape: (num_moments,)
+            # Broadcasting works automatically
+            data_rotated = zm_complex.data * rotation_factor
+
+        elif zm_complex.data.ndim == 3:
+            # Shape: (num_moments, height, width)
+            # rotation_factor shape: (num_moments,)
+            # Need to add axes for broadcasting
+            data_rotated = zm_complex.data * rotation_factor[:, np.newaxis, np.newaxis]
+
+        return zmoments(data=data_rotated, n=zm_complex.n, m=zm_complex.m)
 
     def rot_maps(self, n_folds, p=2, m_unselect=None):
-        # Normalize data before squaring (if p is not None)
+        """
+        Compute rotation maps for detecting n-fold symmetries.
+
+        Parameters
+        ----------
+        n_folds : array_like
+            Fold symmetries to test (e.g., [2, 3, 4] for 2-fold, 3-fold, 4-fold).
+        p : int or None, default=2
+            Order of norm for normalization. If None, skip normalization.
+        m_unselect : array_like or None, default=(0, 1)
+            Azimuthal frequencies to exclude. Must include 0.
+
+        Returns
+        -------
+        ndarray
+            Rotation map values for each n_fold.
+        """
         if self.data.ndim not in (2, 3):
             raise ValueError("Input must be a 2D or 3D array.")
+
         if m_unselect is None:
             m_unselect = (0, 1)
         elif 0 not in m_unselect:
             raise ValueError("m=0 must be included in m_unselect.")
 
-        # Normalize if p is not None, otherwise use data as-is
-        if p is not None:
-            normalized_data = self.unselect(m_unselect).normalize(order=p).data
-            # if unselect() is used, matrix changes too!
-            matrix = construct_rot_maps_matrix(n_folds, self.unselect(m_unselect).m)
-        else:
-            normalized_data = self.unselect(m_unselect).data
-            matrix = construct_rot_maps_matrix(n_folds, self.unselect(m_unselect).m)
+        # Select relevant moments once
+        zm_filtered = self.unselect(m_unselect)
 
+        # Normalize if requested
+        if p is not None:
+            normalized_data = zm_filtered.normalize(order=p).data
+        else:
+            normalized_data = zm_filtered.data
+
+        # Compute rotation maps
         data2 = normalized_data ** 2
+        matrix = construct_rot_maps_matrix(n_folds, zm_filtered.m)
 
         if self.data.ndim == 2:
             return np.dot(data2, matrix.T)
         else:  # ndim == 3
-            print(matrix.shape, data2.shape)
             return np.tensordot(matrix, data2, axes=([1], [0]))
 
-    def mirror_map(self, theta=None, norm_order=2, m_unselect=[0, 1]):
+    def mirror_map(self, theta=None, p=2, m_unselect=(0, 1)):
         if theta is None:
             theta = np.linspace(0, 2 * np.pi, 361)[0:360]
-        if norm_order is None:
+        if p is None:
             zm = self.unselect(m_unselect=m_unselect)
         else:
-            zm = self.unselect(m_unselect=m_unselect).normalize(order=norm_order)
-            #zm_temp = self.unselect(m_unselect=m_unselect)
-            #zm = zm_temp.normalize(order=norm_order)
+            zm = self.unselect(m_unselect=m_unselect).normalize(order=p)
 
         A = zm.to_complex().data.real
         B = zm.to_complex().data.imag
         part1 = A ** 2 - B ** 2
         part2 = 2 * A * B
-        data = np.vstack([part1, part2])
-        # self.moments_data = data
 
-    # Notice
+        # For 2D: stack along moment axis?
+        if self.data.ndim == 2:
+            data = np.hstack([part1, part2])  # (num_samples, 2*num_moments)
+        # For 3D: stack along moment axis?
+        elif self.data.ndim == 3:
+            data = np.vstack([part1, part2])  # (2*num_moments, height, width)
+
+        # Notice
         ms = zm.to_complex().m
         cosmt = np.array([np.cos(m * t) for t in theta for m in ms]).reshape(len(theta), -1)
         sinmt = np.array([np.sin(m * t) for t in theta for m in ms]).reshape(len(theta), -1)
         matrix = np.hstack([cosmt, sinmt])  # 360 x N
-        self.weights = matrix
+        # self.weights = matrix    # this line is for debug
         if self.data.ndim == 2:
             return np.dot(data, matrix.T).max(axis=1)
         elif self.data.ndim == 3:
