@@ -109,6 +109,10 @@ def check_array1d(data):
 
 
 def construct_complex_matrix(n, m):
+    sort_idx = np.lexsort((m, n))
+    n = n[sort_idx]
+    m = m[sort_idx]
+
     j1 = nm2j(n, m)
     j2 = nm2j_complex(n, np.abs(m))
 
@@ -126,6 +130,70 @@ def construct_complex_matrix(n, m):
     for i, (ind, v) in enumerate(zip(j2, vals)):
         c_matrix[d[ind], i] = v
     return c_matrix
+
+def construct_real_matrix(n, m):
+    """
+    Construct matrix to convert complex Zernike moments back to real representation.
+
+    Parameters
+    ----------
+    n : array_like
+        Radial orders for complex moments (n >= 0).
+    m : array_like
+        Azimuthal frequencies for complex moments (m >= 0).
+
+    Returns
+    -------
+    inv_matrix : ndarray
+        Transformation matrix to convert complex to real moments.
+        Shape: (num_real, num_complex)
+    n_real : ndarray
+        Radial orders for real moments.
+    m_real : ndarray
+        Azimuthal frequencies for real moments (includes ±m).
+    """
+    n = np.asarray(n)
+    m = np.asarray(m)
+
+    # Reconstruct original (n, ±m) pairs
+    n_real = []
+    m_real = []
+
+    for n_val, m_val in zip(n, m):
+        if m_val == 0:
+            n_real.append(n_val)
+            m_real.append(0)
+        else:  # m_val > 0
+            n_real.extend([n_val, n_val])
+            m_real.extend([m_val, -m_val])
+
+    n_real = np.array(n_real)
+    m_real = np.array(m_real)
+    # Sort by (n, m) to get a canonical ordering
+    sort_idx = np.lexsort((m_real, n_real))
+    n_real = n_real[sort_idx]
+    m_real = m_real[sort_idx]
+
+    # Get forward transformation matrix: complex = c_matrix @ real
+    c_matrix = construct_complex_matrix(n=n_real, m=m_real)
+    # c_matrix.shape = (num_complex, num_real)
+
+    num_complex, num_real = c_matrix.shape
+
+    # Build inverse transformation matrix: real = inv_matrix @ complex
+    # inv_matrix.shape = (num_real, num_complex)
+    inv_matrix = np.zeros((num_real, num_complex), dtype=complex)
+
+    for j in range(num_real):
+        for i in range(num_complex):
+            if c_matrix[i, j] == 1:
+                # Real moment j comes from real part of complex moment i
+                inv_matrix[j, i] = 1.0
+            elif c_matrix[i, j] == 1j:
+                # Real moment j comes from imaginary part of complex moment i
+                inv_matrix[j, i] = -1j  # Multiply by -1j to extract imaginary part
+
+    return inv_matrix, n_real, m_real
 
 
 def construct_rot_maps_matrix(n_folds, m):
@@ -193,7 +261,29 @@ class zmoments:
             return self
 
     def to_real(self):
-        pass
+        """
+        Convert complex Zernike moments back to real representation.
+
+        Returns
+        -------
+        zmoments
+            Zernike moments in real representation.
+        """
+        if self.data.dtype == complex:
+            # Get inverse transformation matrix
+            inv_matrix, n_real, m_real = construct_real_matrix(self.n, self.m)
+
+            if self.data.ndim == 2:
+                zm_real = np.dot(self.data, inv_matrix.T).real
+            elif self.data.ndim == 3:
+                zm_real = np.tensordot(inv_matrix, self.data, axes=([1], [0])).real
+            else:
+                raise ValueError("Invalid Zernike moment array shape.")
+
+            return zmoments(data=zm_real, n=n_real, m=m_real)
+        else:
+            # Already in real representation
+            return self
 
 
     def normalize(self, order=None):
@@ -227,16 +317,15 @@ class zmoments:
         m_unselect = check_array1d(m_unselect)
         m_select = np.array([m for m in np.unique(np.abs(self.m)) if m not in m_unselect])
         return self.select(m_select)
+
     @property
     def is_complex(self):
         return self.data.dtype == 'complex128'
+
     def rotate(self, theta):
-        if not self.is_complex:
-            zm_complex = self.to_complex()
-        else:
-            zm_complex = self
+        zm_complex = self.to_complex()
         data_complex = zm_complex.data * np.exp(-np.deg2rad(theta)*1j)
-        return zmoments(data=data_complex, n=self.n, m=self.m)
+        return zmoments(data=data_complex, n=zm_complex.n, m=zm_complex.m)
 
 
     def rot_maps(self, n_folds, p=2, m_unselect=None):
