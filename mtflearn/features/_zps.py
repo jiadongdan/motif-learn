@@ -153,7 +153,7 @@ class ZPs(BaseEstimator, TransformerMixin):
         area = np.pi * self.size ** 2 / 4
         zernike_moments = np.dot(reshaped_images, reshaped_polynomials.T) / area
 
-        return zmoments(data=zernike_moments, n=self.n, m=self.m)
+        return zmoments(data=zernike_moments, n=self.n, m=self.m, patch_size=self.size)
 
     def _transform_fft_convolve(self, image: np.ndarray) -> zmoments:
         """Transform using FFT convolution method."""
@@ -181,15 +181,15 @@ class ZPs(BaseEstimator, TransformerMixin):
         # Edge sizes follow scipy.signal.fftconvolve convention:
         #   - Odd kernel size: symmetric edges
         #   - Even kernel size: asymmetric (1 more pixel invalid on right/bottom)
-        edge_before = (self.size - 1) // 2
-        edge_after = self.size - 1 - edge_before
+        # edge_before = (self.size - 1) // 2
+        # edge_after = self.size - 1 - edge_before
 
-        zernike_moments[:, :edge_before, :] = np.nan           # top edge
-        zernike_moments[:, -edge_after:, :] = np.nan           # bottom edge
-        zernike_moments[:, :, :edge_before] = np.nan           # left edge
-        zernike_moments[:, :, -edge_after:] = np.nan           # right edge
+        # zernike_moments[:, :edge_before, :] = np.nan           # top edge
+        # zernike_moments[:, -edge_after:, :] = np.nan           # bottom edge
+        # zernike_moments[:, :, :edge_before] = np.nan           # left edge
+        # zernike_moments[:, :, -edge_after:] = np.nan           # right edges
 
-        return zmoments(data=zernike_moments, n=self.n, m=self.m)
+        return zmoments(data=zernike_moments, n=self.n, m=self.m, patch_size=self.size)
 
     def fit_transform(self, X: np.ndarray, y: Optional[np.ndarray] = None) -> zmoments:
         """Fit and transform (fit is no-op)."""

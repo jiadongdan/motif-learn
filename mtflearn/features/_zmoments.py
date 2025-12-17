@@ -237,11 +237,12 @@ def construct_rot_maps_matrix(n_folds, m):
 
 class zmoments:
 
-    def __init__(self, data, n, m):
+    def __init__(self, data, n, m, patch_size=None):
         # Convert to numpy arrays if needed
         self.n = np.asarray(n)
         self.m = np.asarray(m)
         self.data = np.asarray(data)
+        self.patch_size = patch_size
 
         # Validate shapes
         if self.n.shape != self.m.shape:
@@ -275,6 +276,27 @@ class zmoments:
         elif self.data.ndim == 3:
             self.data = self.data[sort_idx, :, :]
 
+    @property
+    def valid_mask(self):
+        if self.data.ndim == 2 or self.patch_size is None:
+            return None
+        elif self.data.ndim == 3:
+            valid_mask = np.ones(self.data.shape[1:]).astype(bool)
+            edge_before = (self.patch_size - 1) // 2
+            edge_after = self.patch_size - 1 - edge_before
+
+            valid_mask[:edge_before, :] = False           # top edge
+            valid_mask[-edge_after:, :] = False           # bottom edge
+            valid_mask[:, :edge_before] = False           # left edge
+            valid_mask[:, -edge_after:] = False           # right edges
+            return valid_mask
+        else:
+            raise ValueError("Data must be 2D or 3D array.")
+
+    @property
+    def is_complex(self):
+        return np.iscomplexobj(self.data)
+
     def to_complex(self):
         if self.data.dtype != complex:
             c_matrix = construct_complex_matrix(n=self.n, m=self.m)
@@ -289,7 +311,7 @@ class zmoments:
             c_matrix[c_matrix == 1j] = 0
             m = c_matrix.dot(np.abs(self.m)).real.astype(int)
             n = c_matrix.dot(np.abs(self.n)).real.astype(int)
-            return zmoments(data=zm_complex, n=n, m=m)
+            return zmoments(data=zm_complex, n=n, m=m, patch_size=self.patch_size)
         else:
             return self
 
@@ -313,7 +335,7 @@ class zmoments:
             else:
                 raise ValueError("Invalid Zernike moment array shape.")
 
-            return zmoments(data=zm_real, n=n_real, m=m_real)
+            return zmoments(data=zm_real, n=n_real, m=m_real, patch_size=self.patch_size)
         else:
             # Already in real representation
             return self
@@ -331,7 +353,7 @@ class zmoments:
             normalized_data = self.data / norms
         else:
             raise ValueError("Input must be a 2D or 3D array.")
-        return zmoments(data=normalized_data, n=self.n, m=self.m)
+        return zmoments(data=normalized_data, n=self.n, m=self.m, patch_size=self.patch_size)
 
 
     def select(self, m_select):
@@ -340,9 +362,9 @@ class zmoments:
 
         ind = np.where(np.in1d(np.abs(self.m), m_select))[0]
         if self.data.ndim == 2:
-            return zmoments(data=self.data[:, ind], n=self.n[ind], m=self.m[ind])
+            return zmoments(data=self.data[:, ind], n=self.n[ind], m=self.m[ind], patch_size=self.patch_size)
         elif self.data.ndim == 3:
-            return zmoments(data=self.data[ind, :, :], n=self.n[ind], m=self.m[ind])
+            return zmoments(data=self.data[ind, :, :], n=self.n[ind], m=self.m[ind], patch_size=self.patch_size)
         else:
             raise ValueError("Invalid Zernike moment array shape, it can only be 2D or 3D.")
 
@@ -351,9 +373,6 @@ class zmoments:
         m_select = np.array([m for m in np.unique(np.abs(self.m)) if m not in m_unselect])
         return self.select(m_select)
 
-    @property
-    def is_complex(self):
-        return np.iscomplexobj(self.data)
 
     def rotate(self, theta):
         """
@@ -396,7 +415,7 @@ class zmoments:
             # Need to add axes for broadcasting
             data_rotated = zm_complex.data * rotation_factor[:, np.newaxis, np.newaxis]
 
-        return zmoments(data=data_rotated, n=zm_complex.n, m=zm_complex.m)
+        return zmoments(data=data_rotated, n=zm_complex.n, m=zm_complex.m, patch_size=self.patch_size)
 
     def rot_maps(self, n_folds, p=2, m_unselect=None):
         """
