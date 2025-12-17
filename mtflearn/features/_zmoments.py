@@ -444,7 +444,7 @@ class zmoments:
 
     def mirror_map(self, theta=None, p=2, m_unselect=(0, 1)):
         if theta is None:
-            theta = np.linspace(0, 2 * np.pi, 361)[0:360]
+            theta = np.linspace(0, 2 * np.pi, 360, endpoint=False)
         if p is None:
             zm = self.unselect(m_unselect=m_unselect)
         else:
