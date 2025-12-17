@@ -2,14 +2,29 @@ import numpy as np
 from scipy.special import factorial
 from scipy.signal import fftconvolve
 from sklearn.base import BaseEstimator, TransformerMixin
-from typing import Union, Optional, Tuple
+from typing import Optional, Tuple
 
 from ._zmoments import zmoments
 
 
 class ZPs(BaseEstimator, TransformerMixin):
+    """
+    Zernike Polynomials transformer for computing Zernike moments.
+
+    Parameters
+    ----------
+    n_max : int
+        Maximum radial order.
+    size : int
+        Size of the polynomial grid (size x size).
+    """
 
     def __init__(self, n_max: int, size: int):
+        if n_max < 0:
+            raise ValueError("n_max must be non-negative.")
+        if size <= 0:
+            raise ValueError("size must be positive.")
+
         self.n_max = n_max
         self.size = size
         self.n, self.m, self.polynomials = self._generate_polynomials()
@@ -55,56 +70,80 @@ class ZPs(BaseEstimator, TransformerMixin):
         return np.array(n_values), np.array(m_values), np.array(zernike)
 
     def get_polynomials(self) -> np.ndarray:
+        """Return the generated Zernike polynomials."""
         return self.polynomials
 
-    def fit(self, X: np.ndarray, y: Optional[Union[np.ndarray, None]] = None):
+    def fit(self, X: np.ndarray, y: Optional[np.ndarray] = None) -> 'ZPs':
+        """Fit method (no-op for compatibility with sklearn)."""
         return self
 
-    def transform(self, images: np.ndarray) -> np.ndarray:
+    def transform(self, images: np.ndarray) -> zmoments:
+        """
+        Transform images to Zernike moments.
+
+        Parameters
+        ----------
+        images : np.ndarray
+            2D image or 3D array of images.
+
+        Returns
+        -------
+        zmoments
+            Zernike moments object.
+        """
         if images.ndim == 2:
             return self._transform_fft_convolve(images)
         elif images.ndim == 3:
             return self._transform_dot_product(images)
+        else:
+            raise ValueError("Images must be 2D or 3D array.")
 
-    def _validate_size(self, images):
-        num_images, height, width = images.shape
+    def _validate_size(self, images: np.ndarray) -> None:
+        """Validate that image size matches polynomial size."""
+        if images.ndim == 2:
+            height, width = images.shape
+        elif images.ndim == 3:
+            _, height, width = images.shape
+        else:
+            raise ValueError("Images must be 2D or 3D array.")
+
         if height != self.size or width != self.size:
-            raise ValueError("Each image size must match the initialized polynomial size")
+            raise ValueError(
+                f"Image size ({height}x{width}) must match polynomial size "
+                f"({self.size}x{self.size})"
+            )
 
-    def _transform_dot_product(self, images: np.ndarray) -> np.ndarray:
-        num_images, height, width = images.shape
+    def _transform_dot_product(self, images: np.ndarray) -> zmoments:
+        """Transform using dot product method."""
         self._validate_size(images)
+        num_images = images.shape[0]
 
-        reshaped_polynomials = np.array(self.polynomials).reshape(-1, self.size * self.size)
+        reshaped_polynomials = self.polynomials.reshape(-1, self.size * self.size)
         reshaped_images = images.reshape(num_images, self.size * self.size)
 
-        area = (self.size * self.size) / 4 * np.pi
+        area = np.pi * self.size ** 2 / 4
         zernike_moments = np.dot(reshaped_images, reshaped_polynomials.T) / area
 
         return zmoments(data=zernike_moments, n=self.n, m=self.m)
 
-    def _transform_pseudo_inverse(self, images: np.ndarray) -> np.ndarray:
-        num_images, height, width = images.shape
-        self._validate_size(images)
+    def _transform_fft_convolve(self, image: np.ndarray) -> zmoments:
+        """Transform using FFT convolution method."""
+        self._validate_size(image)
 
-        reshaped_polynomials = np.array(self.polynomials).reshape(-1, self.size * self.size)
-        reshaped_images = images.reshape(num_images, self.size * self.size)
-
-        pseudo_inv_polynomials = np.linalg.pinv(reshaped_polynomials)
-        zernike_moments = reshaped_images.dot(pseudo_inv_polynomials)
-
-        return zmoments(data=zernike_moments, n=self.n, m=self.m)
-
-    def _transform_fft_convolve(self, image: np.ndarray):
         shape = (len(self.n), image.shape[0], image.shape[1])
-        image = np.broadcast_to(image, shape)
-        zernike_moments = fftconvolve(image, self.polynomials, mode='same', axes=[1, 2])
+        image_broadcast = np.broadcast_to(image, shape)
+        zernike_moments = fftconvolve(image_broadcast, self.polynomials, mode='same', axes=[1, 2])
+
+        # Parity-based sign correction: f = (-1)^n
         f = 1 - self.n % 2
         f[f == 0] = -1
         f = f[:, np.newaxis, np.newaxis]
-        area = np.pi * (self.size) ** 2 / 4
+
+        area = np.pi * self.size ** 2 / 4
         zernike_moments = f * zernike_moments / area
+
         return zmoments(data=zernike_moments, n=self.n, m=self.m)
 
-    def fit_transform(self, X: np.ndarray, y=None, **kwargs) -> np.ndarray:
+    def fit_transform(self, X: np.ndarray, y: Optional[np.ndarray] = None) -> zmoments:
+        """Fit and transform (fit is no-op)."""
         return self.fit(X).transform(X)
