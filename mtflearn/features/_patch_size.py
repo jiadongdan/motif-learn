@@ -84,8 +84,8 @@ def radial_profile(data, center=None):
     counts = np.bincount(r_int.ravel(), minlength=max_radius+1)
 
     # Avoid division by zero
-    mask = counts > 0
-    profile[mask] /= counts[mask]
+    # mask = counts > 0
+    # profile[mask] /= counts[mask]
 
     # Trim to max_radius
     profile = profile[:max_radius]
