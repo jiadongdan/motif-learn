@@ -3,6 +3,7 @@ from scipy.fft import fft2, fftshift
 from skimage.restoration import estimate_sigma
 from ._patch_size import radial_profile
 from ..denoise._denoise_fft import denoise_fft
+from ..datasets._noise_models import add_gaussian_noise
 
 def _get_cumulative_energy(patch, window_type='hann', normalize=True,
                            return_profile=False, epsilon=1e-10):
@@ -104,8 +105,14 @@ def get_ps(img, n_samples, patch_size):
         ps.append(patch)
     return np.array(ps)
 
-def estimate_n_max(img, patch_size, n_samples=50, p=0.01):
-    img_denoised = denoise_fft(img, p=p)
+def estimate_n_max(img, patch_size, n_samples=50, p=0.01, t=0.01):
+    sigma = estimate_sigma(img)
+    if sigma > t:
+        img_denoised = denoise_fft(img, p=p)
+    else:
+        img_denoised = img.copy()
+        img = add_gaussian_noise(img_denoised, sigma=0.3)
+
     ps = get_ps(img, patch_size=patch_size, n_samples=n_samples)
     ps_denoised = get_ps(img_denoised, patch_size=patch_size, n_samples=n_samples)
     n_max_list = []
