@@ -274,7 +274,7 @@ def estimate_patch_size(img, window_size=None, standardize=True, n_samples=None,
 
     # Average autocorrelation maps
     autocorr_mean = np.mean(autocorr_maps, axis=0)
-    autocorr_mean = median_filter(autocorr_mean, size=3) # handle the central DC
+    # autocorr_mean = median_filter(autocorr_mean, size=3) # handle the central DC
 
     # Compute radial profile
     line = radial_profile(autocorr_mean, method=radial_method)
