@@ -220,7 +220,7 @@ def find_highest_peak(radial_profile, min_distance=5, prominence_factor=0.15,
 
 def estimate_patch_size(img, window_size=None, standardize=True, n_samples=None,
                         min_distance=5, prominence_factor=0.15,
-                        min_width=2, smooth_sigma=1.0, debug=False):
+                        min_width=2, smooth_sigma=1.0, radial_method='max', debug=False):
     """
     Estimate lattice spacing from image using autocorrelation analysis.
 
@@ -277,7 +277,7 @@ def estimate_patch_size(img, window_size=None, standardize=True, n_samples=None,
     autocorr_mean = median_filter(autocorr_mean, size=3) # handle the central DC
 
     # Compute radial profile
-    line = radial_profile(autocorr_mean, method="max")
+    line = radial_profile(autocorr_mean, method=radial_method)
 
     # Search up to half the radius to avoid edge artifacts
     max_search = len(line)
