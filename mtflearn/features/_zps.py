@@ -34,10 +34,10 @@ class ZPs(BaseEstimator, TransformerMixin):
             )
 
         # Single warning for suboptimal but usable range
-        if n_max > size / 3:
-            recommended_max = size // 3
+        if n_max > size / 2:
+            recommended_max = size // 2
             warnings.warn(
-                f"n_max={n_max} exceeds recommended limit of size/3≈{recommended_max}. "
+                f"n_max={n_max} exceeds recommended limit of size/2≈{recommended_max}. "
                 f"High-order Zernike moments may suffer from aliasing and numerical "
                 f"errors. For accurate results, use n_max <= {size//2}; for maximum "
                 f"stability, use n_max <= {recommended_max}.",
