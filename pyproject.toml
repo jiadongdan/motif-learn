@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "motif-learn"
-version = "0.1.0"
+version = "0.1.1"
 description = "Zernike feature representation and manifold learning of scanning transmission electron microscopy images"
 authors = [{ name = "Jiadong Dan", email = "jiadong.dan@u.nus.edu" }]
 license = { text = "MIT" }
