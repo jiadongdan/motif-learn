@@ -1,12 +1,20 @@
-![workflow status](https://github.com/jiadongdan/motif-learn/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/jiadongdan/motif-learn/actions/workflows/ci.yml/badge.svg)
+[![PyPI](https://img.shields.io/pypi/v/motif-learn)](https://pypi.org/project/motif-learn/)
+[![Python](https://img.shields.io/pypi/pyversions/motif-learn)](https://pypi.org/project/motif-learn/)
 
 ![Logo](notebooks/motif-learn%20logo.png)
 
 # motif-learn: machine learning in scanning transmission electron microscopy
 
-Welcome to **motif-learn**, a Python package designed to apply machine learning techniques to scanning transmission electron microscopy (STEM) data. This tool enables researchers to identify and analyze structural motifs in atomic resolution images efficiently, offering a powerful way to explore materials with defects. 🚀
+Welcome to **motif-learn**, a Python package designed to apply machine learning techniques to scanning transmission electron microscopy (STEM) data. This tool enables researchers to identify and analyze structural motifs in atomic resolution images efficiently, offering a powerful way to explore materials with defects.
 
 ## Installation🛠️
+
+```bash
+pip install motif-learn
+```
+
+To install the latest development version directly from GitHub:
 
 ```bash
 pip install git+https://github.com/jiadongdan/motif-learn.git
