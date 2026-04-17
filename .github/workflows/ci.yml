@@ -11,6 +11,7 @@ on:
     paths:
       - 'mtflearn/**'
       - 'tests/**'
+  workflow_dispatch:
 
 jobs:
   test:
