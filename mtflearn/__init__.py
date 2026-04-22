@@ -23,6 +23,7 @@ class _LazyLoader:
 # Setup lazy loading for sub-packages.
 features = _LazyLoader('mtflearn.features')
 denoise = _LazyLoader('mtflearn.denoise')
+background = _LazyLoader('mtflearn.background')
 io = _LazyLoader('mtflearn.io')
 clustering = _LazyLoader('mtflearn.clustering')
 utils = _LazyLoader('mtflearn.utils')
@@ -41,6 +42,7 @@ from mtflearn.io._io import load_image
 
 __all__ = ['features',
            'denoise',
+           'background',
            'io',
            'clustering',
            'utils',
