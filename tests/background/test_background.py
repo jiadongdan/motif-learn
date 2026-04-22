@@ -3,11 +3,14 @@ import pytest
 
 import mtflearn.background as background_pkg
 from mtflearn.background import estimate_background_baseline
+from mtflearn.background import estimate_characteristic_spacing
 from mtflearn.background import estimate_background_opening
 from mtflearn.background import estimate_background_rolling_ball
 from mtflearn.background import remove_background_baseline
 from mtflearn.background import remove_background_opening
 from mtflearn.background import remove_background_rolling_ball
+from mtflearn.background import select_background_parameter
+from mtflearn.background import suggest_background_parameters
 
 
 @pytest.fixture
@@ -27,6 +30,9 @@ def test_background_subpackage_exports_public_api():
         "remove_background_rolling_ball",
         "estimate_background_baseline",
         "remove_background_baseline",
+        "estimate_characteristic_spacing",
+        "suggest_background_parameters",
+        "select_background_parameter",
     }
     assert expected.issubset(set(dir(background_pkg)))
 
@@ -91,3 +97,27 @@ def test_background_methods_preserve_constant_background():
     np.testing.assert_allclose(residual_open, np.zeros_like(image))
     np.testing.assert_allclose(residual_rb, np.zeros_like(image))
     np.testing.assert_allclose(residual_base, np.zeros_like(image))
+
+
+def test_suggest_background_parameters_uses_explicit_spacing(synthetic_image):
+    params = suggest_background_parameters(synthetic_image, spacing=20)
+    assert params["spacing"] == 20.0
+    assert params["opening_size"] == 41
+    assert params["rolling_ball_radius"] == 60
+    assert params["baseline_sigma"] == 30.0
+
+
+def test_select_background_parameter_returns_method_specific_value(synthetic_image):
+    assert select_background_parameter("opening", synthetic_image, spacing=20) == 41
+    assert select_background_parameter("rolling_ball", synthetic_image, spacing=20) == 60
+    assert select_background_parameter("baseline", synthetic_image, spacing=20) == 30.0
+
+
+def test_select_background_parameter_rejects_unknown_method(synthetic_image):
+    with pytest.raises(ValueError, match="method must be one of"):
+        select_background_parameter("unknown", synthetic_image, spacing=20)
+
+
+def test_estimate_characteristic_spacing_rejects_non_2d_input():
+    with pytest.raises(ValueError, match="image must be a 2D array."):
+        estimate_characteristic_spacing(np.ones((4, 4, 2)))
