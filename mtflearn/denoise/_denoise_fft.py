@@ -3,11 +3,12 @@ import numpy as np
 
 def denoise_fft(image, p):
     """
-    Denoise a 2D image using FFT by retaining only the top p fraction of the power spectrum.
+    Denoise a 2D image using FFT by retaining only the top p fraction
+    of Fourier coefficients by power.
 
     Parameters:
     image (np.ndarray): Input 2D image array.
-    p (float): Fraction of pixels to keep in Fourier space. Must be between 0 and 1.
+    p (float): Fraction of Fourier coefficients to keep. Must be between 0 and 1.
 
     Returns:
     np.ndarray: Denoised image.
@@ -22,19 +23,18 @@ def denoise_fft(image, p):
     # Compute the 2D FFT of the image
     fft_image = np.fft.fft2(image)
 
-    # Compute the power spectrum
-    # power_spectrum = np.abs(fft_image) ** 2
-    power_spectrum = np.abs(fft_image)
-    # Flatten the power spectrum and sort the values in descending order
-    flat_power_spectrum = power_spectrum.flatten()
-    sorted_power_spectrum = np.sort(flat_power_spectrum)[::-1]
+    # Use squared magnitude so the selection criterion matches "power".
+    power_spectrum = np.abs(fft_image) ** 2
+    flat_power_spectrum = power_spectrum.ravel()
 
-    # Determine the threshold value to keep the top p fraction of the power spectrum
-    threshold_index = int(np.ceil(p * len(sorted_power_spectrum))) - 1
-    threshold_value = sorted_power_spectrum[threshold_index]
-
-    # Create a mask to retain only the top p fraction of the power spectrum
-    mask = power_spectrum >= threshold_value
+    # Keep exactly the requested number of coefficients, even when many
+    # coefficients tie at the cutoff.
+    num_coeffs = flat_power_spectrum.size
+    num_keep = int(np.ceil(p * num_coeffs))
+    top_indices = np.argpartition(flat_power_spectrum, -num_keep)[-num_keep:]
+    mask = np.zeros(num_coeffs, dtype=bool)
+    mask[top_indices] = True
+    mask = mask.reshape(power_spectrum.shape)
 
     # Apply the mask to the FFT image
     fft_filtered = fft_image * mask

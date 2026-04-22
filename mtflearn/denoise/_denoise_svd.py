@@ -6,6 +6,19 @@ from sklearn.utils.extmath import randomized_svd
 from time import time
 
 
+def _patch_start_indices(image_extent, patch_extent, step):
+    if step <= 0:
+        raise ValueError("extraction_step must be a positive integer.")
+    if patch_extent >= image_extent:
+        raise ValueError("patch_size must be strictly smaller than the image size.")
+
+    last_start = image_extent - patch_extent
+    indices = np.arange(0, last_start, step)
+    if indices.size == 0 or indices[-1] != last_start:
+        indices = np.append(indices, last_start)
+    return indices
+
+
 def extract_patches(data, patch_shape=64, extraction_step=1):
     data_ndim = data.ndim
     # if patch_shape is a number, turn it into tuple
@@ -25,16 +38,8 @@ def extract_patches(data, patch_shape=64, extraction_step=1):
     # Using strides and shape to get a 4d numpy array
     patches = as_strided(data, shape=shape, strides=strides)
 
-    h = data.shape[0] - patch_shape[0]
-    w = data.shape[1] - patch_shape[1]
-
-    i = np.arange(0, h, extraction_step)
-    j = np.arange(0, w, extraction_step)
-
-    if i[-1] != h:
-        i = np.insert(i, i.size, h)
-    if j[-1] != w:
-        j = np.insert(j, j.size, w)
+    i = _patch_start_indices(data.shape[0], patch_shape[0], extraction_step)
+    j = _patch_start_indices(data.shape[1], patch_shape[1], extraction_step)
 
     ij = np.array([(e[0], e[1]) for e in product(i, j)])
 
@@ -49,14 +54,8 @@ def reconstruct_patches(patches, img_shape, reconstruction_step):
     img_height, img_width = img_shape
     patch_height, patch_width = patches.shape[1:3]
 
-    h = img_height - patch_height
-    w = img_width - patch_width
-    i = np.arange(0, h, reconstruction_step)
-    j = np.arange(0, w, reconstruction_step)
-    if i[-1] != h:
-        i = np.insert(i, i.size, h)
-    if j[-1] != w:
-        j = np.insert(j, j.size, w)
+    i = _patch_start_indices(img_height, patch_height, reconstruction_step)
+    j = _patch_start_indices(img_width, patch_width, reconstruction_step)
     # Patches accumulation
     img = np.zeros(img_shape)
     for p, (m, n) in zip(patches, product(i, j)):
@@ -82,12 +81,16 @@ def denoise_svd(img, patch_size, n_components, extraction_step=None, verbose=Tru
         patch_size = tuple([patch_size] * 2)
     img_height, img_width = img.shape
     patch_height, patch_width = patch_size
+    if patch_height >= img_height or patch_width >= img_width:
+        raise ValueError(
+            "patch_size must be strictly smaller than the image dimensions."
+        )
     num_patches = (img_height - patch_height + 1) * (img_width - patch_width + 1)
 
     # Estimate extraction step
     # extraction_step = int(np.ceil(np.sqrt(num_patches / 10000)))
     if extraction_step is None:
-        extraction_step = int(patch_size[0]/4)
+        extraction_step = max(1, int(patch_size[0] / 4))
 
     if verbose == True:
         print('Extracting reference patches...')
@@ -130,5 +133,12 @@ class DenoiseSVD:
         self.img_clean = None
 
     def run(self, verbose=False):
-        self.img_clean, self.s_values = denoise_svd(self.image, n_components=self.n_components, patch_size=self.patch_size, return_s=True, verbose=verbose)
+        self.img_clean, self.s_values = denoise_svd(
+            self.image,
+            n_components=self.n_components,
+            patch_size=self.patch_size,
+            extraction_step=self.extraction_step,
+            return_s=True,
+            verbose=verbose,
+        )
         return self.img_clean

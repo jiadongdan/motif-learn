@@ -86,7 +86,8 @@ def compute_mean_and_cov(ps, batch_size, show_progress=True):
         batch_centered = batch - mean
         cov += batch_centered.T @ batch_centered
         total_count += batch.shape[0]
-    cov /= (total_count - 1)
+    if total_count > 1:
+        cov /= (total_count - 1)
 
     return mean, cov
 
@@ -101,6 +102,20 @@ def denoise_svd(image, patch_size, n_components=None, threshold=0.9,
       explained_variance: eigenvalues in descending order,
       explained_variance_ratio: explained variance ratio per component.
     """
+    if isinstance(patch_size, numbers.Number):
+        patch_shape = (int(patch_size), int(patch_size))
+    else:
+        patch_shape = tuple(patch_size)
+        if len(patch_shape) != 2:
+            raise ValueError("patch_size must be an int or a length-2 tuple.")
+        if patch_shape[0] != patch_shape[1]:
+            raise ValueError(
+                "denoise_svd currently supports only square patches; "
+                f"got patch_size={patch_shape}."
+            )
+
+    patch_size = patch_shape[0]
+
     # 1. Extract patches
     patches = extract_patches(image, patch_size)
     if batch_size is None:
@@ -114,10 +129,19 @@ def denoise_svd(image, patch_size, n_components=None, threshold=0.9,
     sorted_indices = np.argsort(eigvals)[::-1]
     eigvals_sorted = eigvals[sorted_indices]
     explained_variance = eigvals_sorted
-    explained_variance_ratio = eigvals_sorted / np.sum(eigvals_sorted)
+    total_variance = np.sum(eigvals_sorted)
+    if np.isclose(total_variance, 0.0):
+        explained_variance_ratio = np.zeros_like(eigvals_sorted)
+    else:
+        explained_variance_ratio = eigvals_sorted / total_variance
 
     if n_components is None:
-        n_components = np.sum(np.cumsum(explained_variance_ratio) < threshold) + 1
+        if np.all(explained_variance_ratio == 0):
+            n_components = 1
+        else:
+            n_components = np.sum(np.cumsum(explained_variance_ratio) < threshold) + 1
+
+    n_components = max(1, min(int(n_components), eigvecs.shape[1]))
 
     # Choose the top n_components eigenvectors
     top_components = eigvecs[:, -n_components:]
