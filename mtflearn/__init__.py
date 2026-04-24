@@ -1,5 +1,5 @@
 # Version should always be readily available.
-__version__ = '0.1.0'
+__version__ = '0.1.2'
 
 # Lazy loading for sub-packages.
 class _LazyLoader:
