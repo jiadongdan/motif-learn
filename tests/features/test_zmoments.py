@@ -1,6 +1,6 @@
 import pytest
 import numpy as np
-from mtflearn.features._zmoments import nm2j
+from mtflearn.features._zmoments import nm2j, zmoments
 
 def test_scalar_inputs():
     """Test function with valid scalar inputs."""
@@ -73,3 +73,16 @@ def test_output_type():
     """Test that the output is of the correct type."""
     assert isinstance(nm2j(2, 0), int)
     assert isinstance(nm2j([2], [0]), np.ndarray)
+
+
+def test_zmoments_select_filters_by_absolute_m_values():
+    data = np.arange(12, dtype=float).reshape(2, 6)
+    n = np.array([0, 1, 1, 2, 2, 3])
+    m = np.array([0, -1, 1, -2, 2, 3])
+
+    z = zmoments(data=data, n=n, m=m)
+    selected = z.select([1, -2])
+
+    np.testing.assert_array_equal(selected.m, np.array([-1, 1, -2, 2]))
+    np.testing.assert_array_equal(selected.n, np.array([1, 1, 2, 2]))
+    np.testing.assert_array_equal(selected.data, data[:, [1, 2, 3, 4]])

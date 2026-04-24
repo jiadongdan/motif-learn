@@ -360,7 +360,7 @@ class zmoments:
         m_select = check_array1d(m_select)
         m_select = np.unique(np.abs(m_select))
 
-        ind = np.where(np.in1d(np.abs(self.m), m_select))[0]
+        ind = np.where(np.isin(np.abs(self.m), m_select))[0]
         if self.data.ndim == 2:
             return zmoments(data=self.data[:, ind], n=self.n[ind], m=self.m[ind], patch_size=self.patch_size)
         elif self.data.ndim == 3:
