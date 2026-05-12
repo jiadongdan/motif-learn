@@ -298,7 +298,7 @@ class zmoments:
         return np.iscomplexobj(self.data)
 
     def to_complex(self):
-        if self.data.dtype != complex:
+        if not self.is_complex:
             c_matrix = construct_complex_matrix(n=self.n, m=self.m)
             if self.data.ndim == 2:
                 # zm_complex = c_matrix.dot((self.data).T).T
@@ -324,7 +324,7 @@ class zmoments:
         zmoments
             Zernike moments in real representation.
         """
-        if self.data.dtype == complex:
+        if self.is_complex:
             # Get inverse transformation matrix
             inv_matrix, n_real, m_real = construct_real_matrix(self.n, self.m)
 
