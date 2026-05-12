@@ -75,6 +75,23 @@ def test_output_type():
     assert isinstance(nm2j([2], [0]), np.ndarray)
 
 
+def test_to_complex_returns_self_for_complex64():
+    n = np.array([0, 1, 1, 2, 2, 2])
+    m = np.array([0, -1, 1, -2, 0, 2])
+    data = np.ones((3, 6), dtype=np.complex64)
+    z = zmoments(data=data, n=n, m=m)
+    assert z.to_complex() is z
+
+
+def test_to_real_converts_complex64_to_real():
+    n = np.array([0, 2, 2])
+    m = np.array([0, 0, 2])
+    data = np.ones((3, 3), dtype=np.complex64)
+    z = zmoments(data=data, n=n, m=m)
+    result = z.to_real()
+    assert not np.iscomplexobj(result.data)
+
+
 def test_zmoments_select_filters_by_absolute_m_values():
     data = np.arange(12, dtype=float).reshape(2, 6)
     n = np.array([0, 1, 1, 2, 2, 3])
