@@ -1,4 +1,5 @@
 import numpy as np
+from scipy.ndimage import uniform_filter
 
 
 def _validate_image(image):
@@ -111,6 +112,153 @@ def suggest_background_parameters(
         "opening_size": opening_size,
         "rolling_ball_radius": rolling_ball_radius,
         "baseline_sigma": baseline_sigma,
+    }
+
+
+def local_variance(image, window_size):
+    """
+    Compute a local variance map using a square moving window.
+
+    Parameters
+    ----------
+    image : ndarray
+        Input 2D image.
+    window_size : int
+        Side length of the local window.
+
+    Returns
+    -------
+    ndarray
+        Local variance map.
+    """
+    image = _validate_image(image).astype(float)
+    window_size = int(window_size)
+    if window_size <= 0:
+        raise ValueError("window_size must be a positive integer.")
+
+    mean = uniform_filter(image, size=window_size, mode="reflect")
+    mean_sq = uniform_filter(image**2, size=window_size, mode="reflect")
+    return np.maximum(mean_sq - mean**2, 0.0)
+
+
+def score_opening_background_local_variance(
+    image,
+    opening_size,
+    spacing=None,
+    shape="disk",
+    window_size=None,
+    n_samples=16,
+    random_state=0,
+):
+    """
+    Score the texture remaining in an opening-estimated background using
+    the mean local variance.
+
+    Lower scores indicate a smoother background with less atomic-scale
+    texture remaining.
+    """
+    image = _validate_image(image)
+
+    if spacing is None:
+        spacing = estimate_characteristic_spacing(
+            image,
+            window_size=window_size,
+            n_samples=n_samples,
+            random_state=random_state,
+        )
+    if spacing is None or spacing <= 0:
+        raise ValueError("spacing must be positive or estimable from the image.")
+
+    from mtflearn.background._morphology import estimate_background_opening
+
+    background = estimate_background_opening(image, size=opening_size, shape=shape)
+    lv_window = max(1, int(round(spacing)))
+    lv_map = local_variance(background, window_size=lv_window)
+    return float(lv_map.mean())
+
+
+def select_opening_size_local_variance(
+    image,
+    sizes,
+    spacing=None,
+    shape="disk",
+    window_size=None,
+    n_samples=16,
+    random_state=0,
+    relative_threshold=0.1,
+):
+    """
+    Select the smallest opening size whose background local-variance score
+    is sufficiently low relative to the first candidate size.
+
+    Parameters
+    ----------
+    image : ndarray
+        Input 2D image.
+    sizes : sequence of int
+        Candidate opening sizes to evaluate, typically in increasing order.
+    spacing : float, optional
+        Characteristic spacing in pixels. If omitted, estimate it.
+    shape : {"disk", "square"}, default="disk"
+        Structuring shape used for opening-size evaluation.
+    window_size : int, optional
+        Window size forwarded to the spacing estimator.
+    n_samples : int, default=16
+        Number of patches used by the spacing estimator.
+    random_state : int or None, default=0
+        Random seed for deterministic spacing estimation.
+    relative_threshold : float, default=0.1
+        Select the first size whose score is less than or equal to
+        ``relative_threshold * scores[0]``.
+
+    Returns
+    -------
+    dict
+        Selection summary containing the chosen size, scores, spacing, and
+        evaluated candidate sizes.
+    """
+    image = _validate_image(image)
+    sizes = [int(s) for s in sizes]
+    if len(sizes) == 0:
+        raise ValueError("sizes must contain at least one candidate.")
+    if any(s <= 0 for s in sizes):
+        raise ValueError("sizes must contain only positive integers.")
+    if relative_threshold < 0:
+        raise ValueError("relative_threshold must be nonnegative.")
+
+    if spacing is None:
+        spacing = estimate_characteristic_spacing(
+            image,
+            window_size=window_size,
+            n_samples=n_samples,
+            random_state=random_state,
+        )
+    if spacing is None or spacing <= 0:
+        raise ValueError("spacing must be positive or estimable from the image.")
+
+    scores = [
+        score_opening_background_local_variance(
+            image,
+            opening_size=size,
+            spacing=spacing,
+            shape=shape,
+        )
+        for size in sizes
+    ]
+
+    baseline_score = scores[0]
+    cutoff = relative_threshold * baseline_score
+    chosen_index = next(
+        (i for i, score in enumerate(scores) if score <= cutoff),
+        len(sizes) - 1,
+    )
+
+    return {
+        "spacing": float(spacing),
+        "sizes": sizes,
+        "scores": scores,
+        "cutoff": float(cutoff),
+        "selected_size": sizes[chosen_index],
     }
 
 
