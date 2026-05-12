@@ -286,9 +286,10 @@ class zmoments:
             edge_after = self.patch_size - 1 - edge_before
 
             valid_mask[:edge_before, :] = False           # top edge
-            valid_mask[-edge_after:, :] = False           # bottom edge
             valid_mask[:, :edge_before] = False           # left edge
-            valid_mask[:, -edge_after:] = False           # right edges
+            if edge_after > 0:
+                valid_mask[-edge_after:, :] = False       # bottom edge
+                valid_mask[:, -edge_after:] = False       # right edge
             return valid_mask
         else:
             raise ValueError("Data must be 2D or 3D array.")
@@ -469,8 +470,9 @@ class zmoments:
         else:
             zm = self.unselect(m_unselect=m_unselect).normalize(order=p)
 
-        A = zm.to_complex().data.real
-        B = zm.to_complex().data.imag
+        zm_c = zm.to_complex()
+        A = zm_c.data.real
+        B = zm_c.data.imag
         part1 = A ** 2 - B ** 2
         part2 = 2 * A * B
 
@@ -482,7 +484,7 @@ class zmoments:
             data = np.vstack([part1, part2])  # (2*num_moments, height, width)
 
         # Notice
-        ms = zm.to_complex().m
+        ms = zm_c.m
         cosmt = np.array([np.cos(m * t) for t in theta for m in ms]).reshape(len(theta), -1)
         sinmt = np.array([np.sin(m * t) for t in theta for m in ms]).reshape(len(theta), -1)
         matrix = np.hstack([cosmt, sinmt])  # 360 x N
