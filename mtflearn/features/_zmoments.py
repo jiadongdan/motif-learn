@@ -43,9 +43,9 @@ def nm2j(n, m):
         raise ValueError("`n` and `m` must have the same shape.")
 
     # Validate that n and m are integer-valued
-    if not np.all(np.isclose(n % 1, 0)):
+    if not np.all(np.isclose(n, np.rint(n))):
         raise ValueError("Radial order `n` must be integer-valued.")
-    if not np.all(np.isclose(m % 1, 0)):
+    if not np.all(np.isclose(m, np.rint(m))):
         raise ValueError("Azimuthal frequency `m` must be integer-valued.")
 
     n = n.astype(int)
